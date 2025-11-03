@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Smart Homework Organizer</title>
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+        <style>
+            /* Dark theme variables and improved color palette */
+            :root{
+                --bg1:hsl(217, 41%, 10%); /* page background */
+                --bg2:hsl(220, 49%, 8%); /* panel background */
+                --card:#071127; /* darker card */
+                --muted:#9aa4b2;
+                --accent:#7c5cff; /* violet */
+                --accent-2:#00c2a8; /* teal */
+                --accent-3:#ffd166; /* warm yellow */
+                --glass: rgba(255,255,255,0.03);
+            }
+            *{box-sizing:border-box}
+            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.08), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6eef8;min-height:100vh}
+            header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px}
+            .brand{display:flex;align-items:center;gap:12px}
+            .logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:inline-flex;align-items:center;justify-content:center;color:#061225;font-weight:800}
+            .container{max-width:1200px;margin:20px auto;padding:18px}
+            .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+
+            /* Panels */
+            .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+            .panel h2{margin:0 0 8px;font-size:16px;color:#eaf0ff}
+            .todo-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+            .task{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;background:var(--glass)}
+            .task small{color:var(--muted)}
+            .task .actions{display:flex;gap:8px}
+            .btn{background:linear-gradient(90deg,var(--accent),#5f79ff);color:#061225;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+            .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(124,92,255,0.18)}
+            .btn.warn{background:linear-gradient(90deg,#ff7b7b,#ff4d4d);color:#120406}
+
+            /* Calendar area */
+            .calendar-wrap{display:flex;flex-direction:column;gap:12px}
+            .cal-header{display:flex;justify-content:space-between;align-items:center}
+            .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+            .cal-day{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(255,255,255,0.02)}
+            .cal-day .date{font-weight:700;color:#eaf0ff}
+            .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+            .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
+
+            /* OCR / Hints area */
+            .ocr-area{margin-top:12px;display:flex;gap:12px;align-items:flex-start}
+            .ocr-area textarea{width:100%;min-height:88px;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);color:#eaf0ff}
+
+            footer{margin:28px 0;text-align:center;color:var(--muted);font-size:13px}
+
+            /* modal */
+            .modal{position:fixed;left:0;top:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(1,3,9,0.6), rgba(1,3,9,0.6))}
+            .modal .box{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;max-width:540px;width:100%;border:1px solid rgba(255,255,255,0.03)}
+
+            @media (max-width:920px){.grid{grid-template-columns:1fr;}.container{padding:12px}}
+
+            .cal-day:hover{
+                background-color: #9aa4b2;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="brand">
+                <div class="logo">SH</div>
+                <div>
+                    <div style="font-weight:700">Smart Homework Organizer</div>
+                    <div style="font-size:13px;color:var(--muted)">Organize tasks, calendar, OCR hints — beginner friendly</div>
+                </div>
+            </div>
+            <div>
+                <a id="open-login" class="btn secondary" style="text-decoration:none;color:var(--accent);padding:8px 10px">Log out</a>
+            </div>
+        </header>
+
+        <main class="container">
+            <div class="grid">
+                <aside class="panel">
+                    <h2>Today's Tasks</h2>
+                    <div style="display:flex;gap:8px;margin-top:12px">
+                        <button id="addTaskBtn" class="btn">+ New Task</button>
+                        <button id="scanBtn" class="btn secondary">OCR + Hints</button>
+                    </div>
+
+                    <div class="todo-list" id="todoList"></div>
+
+                    <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
+                        <label style="font-size:13px;color:var(--muted)">Notifications</label>
+                        <input type="checkbox" id="enableNotif" />
+                    </div>
+
+                    <div style="margin-top:12px;font-size:13px;color:var(--muted)">Tip: The app stores data locally in your browser. For persistent notifications when the page is closed consider installing as a PWA or keeping the page open.</div>
+                </aside>
+
+                <section>
+                    <div class="panel calendar-wrap">
+                        <div class="cal-header">
+                            <div style="display:flex;gap:8px;align-items:center">
+                                <button id="prevMonth" class="btn secondary">‹</button>
+                                <div style="font-weight:700" id="monthLabel">Month</div>
+                                <button id="nextMonth" class="btn secondary">›</button>
+                            </div>
+                            <div style="display:flex;gap:8px;align-items:center">
+                                <button id="todayBtn" class="btn secondary">Today</button>
+                            </div>
+                        </div>
+
+                        <div class="cal-grid" id="calGrid"></div>
+                    </div>
+
+                    <div class="panel" style="margin-top:12px">
+                        <h2>OCR & Hints</h2>
+                        <div class="ocr-area">
+                            <div style="width:240px;display:flex;flex-direction:column;gap:8px">
+                                <input type="file" id="imageInput" accept="image/*" />
+                                <button id="runOcrBtn" class="btn">Run OCR</button>
+                                <div style="font-size:13px;color:var(--muted)">Or paste text into the box on the right.</div>
+                                <div style="margin-top:8px;font-size:12px;color:var(--muted)">Use remote AI hints (OpenAI) by running the provided local server and setting <code>OPENAI_API_KEY</code>.</div>
+                            </div>
+                            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+                                <textarea id="ocrText" placeholder="OCR output or paste problem text here..."></textarea>
+                                <div style="display:flex;gap:8px;align-items:center">
+                                    <button id="genHintsBtn" class="btn">Generate Hints</button>
+                                    <button id="copyHints" class="btn secondary">Copy Hints</button>
+                                </div>
+                                <div id="hintsArea" style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-height:60px;color:#eaf0ff"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer>Built with Tesseract.js for OCR (loaded from CDN). Hints are generated locally or via OpenAI (via local proxy) and deliberately avoid solving problems for you.</footer>
+        </main>
+
+        <!-- Modal: Add/Edit Task -->
+        <div class="modal" id="taskModal">
+            <div class="box">
+                <h3 id="modalTitle">New Task</h3>
+                <div style="display:grid;gap:8px;margin-top:8px">
+                    <input id="taskTitle" placeholder="Title (e.g., Math homework)" />
+                    <input id="taskDate" type="date" />
+                    <input id="taskTime" type="time" />
+                    <textarea id="taskDesc" placeholder="Short description or problem text"></textarea>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+                        <button id="saveTask" class="btn">Save</button>
+                        <button id="closeModal" class="btn secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+        <script>
+            // Basic SPA state
+            const state = { tasks: [], selectedDate: new Date().toISOString().slice(0,10), notifEnabled: false };
+
+            // Utilities
+            function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+            function formatDate(d){return d}
+
+            // Storage
+            function loadTasks(){
+                try{state.tasks = JSON.parse(localStorage.getItem('sh_tasks')||'[]')}catch(e){state.tasks=[]}
+            }
+            function saveTasks(){localStorage.setItem('sh_tasks',JSON.stringify(state.tasks))}
+
+            // Calendar render
+            const calGrid = document.getElementById('calGrid');
+            const monthLabel = document.getElementById('monthLabel');
+            let viewDate = new Date();
+
+            function startOfMonth(d){return new Date(d.getFullYear(),d.getMonth(),1)}
+            function endOfMonth(d){return new Date(d.getFullYear(),d.getMonth()+1,0)}
+
+            function renderCalendar(){
+                calGrid.innerHTML='';
+                const start = startOfMonth(viewDate);
+                const end = endOfMonth(viewDate);
+                monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric'});
+                const startWeekday = start.getDay();
+                const total = end.getDate();
+
+                // add blanks
+                for(let i=0;i<startWeekday;i++){const cell=document.createElement('div');cell.className='cal-day';cell.id="cal-day";cell.style.opacity=.4;calGrid.appendChild(cell);}
+
+                for(let d=1;d<=total;d++){
+                    const dt = new Date(viewDate.getFullYear(),viewDate.getMonth(),d);
+                    const key = dt.toISOString().slice(0,10);
+                    const cell=document.createElement('div');cell.className='cal-day';
+                    cell.innerHTML = `<div class="date">${d}</div><div class="dots" data-date="${key}"></div>`;
+                    cell.addEventListener('click',()=>{state.selectedDate=key;renderTodoList();});
+
+                    // show small dots for tasks
+                    const dots = cell.querySelector('.dots');
+                    const tasks = state.tasks.filter(t=>t.date===key);
+                    tasks.slice(0,5).forEach(t=>{const dot=document.createElement('div');dot.className='dot';dots.appendChild(dot)});
+
+                    calGrid.appendChild(cell);
+                }
+            }
+
+            // Todo list render
+            const todoListEl = document.getElementById('todoList');
+            function renderTodoList(){
+                const today = state.selectedDate;
+                todoListEl.innerHTML='';
+                const todays = state.tasks.filter(t=>t.date===today).sort((a,b)=> (a.time||'')>(b.time||'')?1:-1);
+                if(todays.length===0){todoListEl.innerHTML='<div style="color:var(--muted)">No tasks for selected date</div>'}
+                todays.forEach(t=>{
+                    const el=document.createElement('div');el.className='task';
+                    el.innerHTML = `<div><div style="font-weight:600">${escapeHtml(t.title||'Untitled')}</div><small>${t.time||''} ${escapeHtml(t.desc||'')}</small></div><div class="actions"><button data-id="${t.id}" class="btn secondary edit">Edit</button><button data-id="${t.id}" class="btn warn">Delete</button></div>`;
+                    todoListEl.appendChild(el);
+                });
+            }
+
+            // Escape helper
+            function escapeHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+            // Modal actions
+            const modal = document.getElementById('taskModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const taskTitle = document.getElementById('taskTitle');
+            const taskDate = document.getElementById('taskDate');
+            const taskTime = document.getElementById('taskTime');
+            const taskDesc = document.getElementById('taskDesc');
+            let editingId = null;
+
+            document.getElementById('addTaskBtn').addEventListener('click',()=>{openModal()});
+            document.getElementById('closeModal').addEventListener('click',()=>closeModal());
+            function openModal(task){
+                modal.style.display='flex';
+                if(task){editingId=task.id;modalTitle.textContent='Edit Task';taskTitle.value=task.title;taskDate.value=task.date;taskTime.value=task.time||'';taskDesc.value=task.desc||''}
+                else{editingId=null;modalTitle.textContent='New Task';taskTitle.value='';taskDate.value=state.selectedDate;taskTime.value='';taskDesc.value=''}
+            }
+            function closeModal(){modal.style.display='none'}
+
+            document.getElementById('saveTask').addEventListener('click',()=>{
+                const t = {title:taskTitle.value.trim(),date:taskDate.value||state.selectedDate,time:taskTime.value,desc:taskDesc.value};
+                if(!t.title) return alert('Please give the task a title');
+                if(editingId){
+                    const idx = state.tasks.findIndex(x=>x.id===editingId);
+                    if(idx>=0){state.tasks[idx]=Object.assign({},state.tasks[idx],t);}
+                } else { state.tasks.push(Object.assign({id:uid(),notified:false},t)); }
+                saveTasks();renderCalendar();renderTodoList();closeModal();
+            });
+
+            // Edit/Delete handlers (delegation)
+            todoListEl.addEventListener('click',e=>{
+                if(e.target.matches('button.edit')){
+                    const id=e.target.getAttribute('data-id');openModal(state.tasks.find(t=>t.id===id));
+                } else if(e.target.matches('button') && e.target.textContent.toLowerCase()==='delete'){
+                    const id=e.target.getAttribute('data-id');if(confirm('Delete this task?')){state.tasks=state.tasks.filter(t=>t.id!==id);saveTasks();renderCalendar();renderTodoList();}
+                }
+            });
+
+            // Calendar controls
+            document.getElementById('prevMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1);renderCalendar()});
+            document.getElementById('nextMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);renderCalendar()});
+            document.getElementById('todayBtn').addEventListener('click',()=>{viewDate=new Date();state.selectedDate=new Date().toISOString().slice(0,10);renderCalendar();renderTodoList()});
+
+            // Notifications
+            const enableNotif = document.getElementById('enableNotif');
+            enableNotif.addEventListener('change',()=>{state.notifEnabled = enableNotif.checked; localStorage.setItem('sh_notif', state.notifEnabled); if(state.notifEnabled) requestNotificationPermission();});
+
+            function requestNotificationPermission(){
+                if(!('Notification' in window)) return alert('Notifications not supported in this browser');
+                Notification.requestPermission().then(p=>{if(p!=='granted'){alert('Please allow notifications to receive due reminders.')}})
+            }
+
+            // Check due tasks every 30 seconds while page is open
+            function checkNotifications(){
+                if(!state.notifEnabled) return;
+                if(Notification.permission!=='granted') return;
+                const now = new Date();
+                state.tasks.forEach(t=>{
+                    if(t.notified) return;
+                    if(!t.date || !t.time) return;
+                    const when = new Date(t.date+'T'+t.time);
+                    const delta = when - now;
+                    if(delta<=0 && delta>-60000){ // due within last minute
+                        showNotification(`Task due: ${t.title}`, t.desc||'');
+                        t.notified = true; saveTasks();
+                    }
+                });
+            }
+
+            function showNotification(title, body){
+                try{
+                    const n = new Notification(title,{body,icon:''});
+                    // send message to service worker to also show if registered
+                    if(navigator.serviceWorker && navigator.serviceWorker.controller){
+                        navigator.serviceWorker.controller.postMessage({type:'show-notif',title,body});
+                    }
+                }catch(e){console.warn(e)}
+            }
+
+            // OCR & Hints
+            const imageInput = document.getElementById('imageInput');
+            const ocrText = document.getElementById('ocrText');
+            const runOcrBtn = document.getElementById('runOcrBtn');
+            const genHintsBtn = document.getElementById('genHintsBtn');
+            const hintsArea = document.getElementById('hintsArea');
+
+            // Preprocess image: resize to max width and apply simple contrast/grayscale to improve OCR
+            async function preprocessImage(dataUrl, maxWidth = 1600){
+                return new Promise((resolve, reject)=>{
+                    const img = new Image();
+                    img.onload = ()=>{
+                        try{
+                            const ratio = Math.min(1, maxWidth / img.width);
+                            const w = Math.max(1, Math.floor(img.width * ratio));
+                            const h = Math.max(1, Math.floor(img.height * ratio));
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w; canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+
+                            // basic contrast/enhance: convert to grayscale and boost contrast
+                            try{
+                                const imageData = ctx.getImageData(0,0,w,h);
+                                const data = imageData.data;
+                                // contrast factor
+                                const factor = 1.2;
+                                for(let i=0;i<data.length;i+=4){
+                                    const r = data[i], g = data[i+1], b = data[i+2];
+                                    const avg = (r+g+b)/3;
+                                    let v = (avg - 128) * factor + 128;
+                                    v = Math.max(0, Math.min(255, v));
+                                    data[i] = data[i+1] = data[i+2] = v;
+                                }
+                                ctx.putImageData(imageData,0,0);
+                            }catch(e){
+                                // getImageData can fail on cross-origin images; ignore if so
+                                console.warn('preprocessImage: imageData failed', e);
+                            }
+
+                            resolve(canvas.toDataURL('image/png'));
+                        }catch(err){reject(err)}
+                    };
+                    img.onerror = reject;
+                    img.crossOrigin = 'anonymous';
+                    img.src = dataUrl;
+                });
+            }
+
+            runOcrBtn.addEventListener('click', async ()=>{
+                const file = imageInput.files[0];
+                if(!file) return alert('Choose an image first');
+                hintsArea.textContent = 'Loading image...';
+
+                // Read file as data URL
+                const reader = new FileReader();
+                reader.onerror = ()=>{ hintsArea.textContent = 'Failed to read image'; };
+                reader.onload = async (e) => {
+                    const imgSrc = e.target.result;
+                    hintsArea.textContent = 'Preparing image...';
+
+                    try{
+                        const pre = await preprocessImage(imgSrc, 1600);
+
+                        // Use createWorker with explicit paths to ensure the WASM/core is loaded reliably
+                        const worker = Tesseract.createWorker({
+                            logger: m => {
+                                if(m.status && typeof m.progress === 'number'){
+                                    const pct = Math.round(m.progress * 100);
+                                    hintsArea.textContent = `${m.status} — ${pct}%`;
+                                }
+                            },
+                            workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/worker.min.js',
+                            corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@2.1.0/tesseract-core.wasm.js'
+                        });
+
+                        hintsArea.textContent = 'Initializing OCR engine...';
+                        await worker.load();
+                        await worker.loadLanguage('eng');
+                        await worker.initialize('eng');
+
+                        hintsArea.textContent = 'Recognizing text — this may take a moment...';
+                        const { data: { text } } = await worker.recognize(pre);
+                        ocrText.value = text;
+                        hintsArea.textContent = 'OCR complete — press "Generate Hints"';
+
+                        await worker.terminate();
+                    }catch(err){
+                        console.error(err);
+                        hintsArea.textContent = 'OCR failed: ' + (err.message || err);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+
+            genHintsBtn.addEventListener('click',async ()=>{
+                const message = ocrText.value.trim();
+                const chatBox = document.getElementById("hintsArea")
+                if (!message) return;
+
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "message";
+                messageDiv.textContent = "Loading...";
+                chatBox.appendChild(messageDiv);
+
+                try {
+                    const res = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message })
+                    });
+
+                    const data = await res.json();
+
+                    // Clear previous text
+                    messageDiv.innerHTML = "";
+
+                    // Render title and body
+                    const titleEl = document.createElement("h2");
+                    titleEl.textContent = data.title;
+                    const bodyEl = document.createElement("p");
+                    bodyEl.textContent = data.body;
+
+                    messageDiv.appendChild(titleEl);
+                    messageDiv.appendChild(bodyEl);
+
+                } catch (err) {
+                    messageDiv.textContent = "Error: could not connect to GPT-5.";
+                    console.error(err);
+                }
+
+                userMessage.value = "";
+                            });
+
+            document.getElementById('copyHints').addEventListener('click',()=>{navigator.clipboard.writeText(hintsArea.innerText).then(()=>alert('Hints copied'))});
+
+            // Local fallback hint generator (keeps behavior from before)
+            function generateHintsLocal(text){
+                const hints = [];
+                const lower = text.toLowerCase();
+                if(/[0-9]+\s*[=+\-*/^]|x|y|\d+\s?[=]/i.test(text) || /\bsolve\b|\bequation\b|\bintegral\b|\bdifferentiate\b/i.test(text)){
+                    hints.push('Identify what each symbol represents (variables, constants, operators).');
+                    hints.push('Separate the problem: what is given and what is asked.');
+                    hints.push('Try a simpler numeric example to build intuition.');
+                }
+                if(/triangle|circle|angle|perimeter|area|radius|diameter/i.test(lower)){
+                    hints.push('Sketch the figure and label known sides/angles.');
+                    hints.push('Look for symmetries or right angles.');
+                }
+                if(/algorithm|complexity|sort|array|loop|function|variable/i.test(lower)){
+                    hints.push('Break the task into small steps and write pseudocode.');
+                    hints.push('Consider edge cases (empty inputs, very large inputs).');
+                }
+                if(/molecule|reaction|acid|base|cell|photosynthesis/i.test(lower)){
+                    hints.push('Identify conservation rules or balances (mass, charge).');
+                    hints.push('Summarize definitions and key terms first.');
+                }
+                hints.push('Restate the problem in your own words.');
+                hints.push('If stuck, try specific simple examples.');
+                return hints.slice(0,8);
+            }
+
+            // New: remote hint generator using local proxy to OpenAI API.
+            // Falls back to generateHintsLocal() if the server is not available.
+            async function generateHints(text){
+                try{
+                    const resp = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({text})
+                    });
+                    if(resp.ok){
+                        const data = await resp.json();
+                        if(Array.isArray(data.hints) && data.hints.length>0) return data.hints;
+                    }
+                }catch(e){
+                    return "Could not connect to AI";
+                }
+            }
+
+            // Simple background check loop
+            setInterval(checkNotifications,30000); // every 30s
+
+            // Load state & init
+            loadTasks();
+            state.notifEnabled = localStorage.getItem('sh_notif')==='true';
+            enableNotif.checked = state.notifEnabled;
+            renderCalendar();
+            renderTodoList();
+
+            // Register service worker (optional)
+            if('serviceWorker' in navigator){
+                navigator.serviceWorker.register('sw.js').then(()=>console.log('sw registered')).catch(()=>console.warn('sw failed'));
+            }
+
+            // small helpers for login stub
+            document.getElementById('open-login').addEventListener('click',()=>{if(confirm('Log out?')) location.reload()});
+
+            // expose for debug
+            window.SH = {state,save:saveTasks,load:loadTasks};
+        </script>
+    </body>
+</html>

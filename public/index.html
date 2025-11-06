@@ -113,10 +113,7 @@
 
                     <div class="todo-list" id="todoList"></div>
 
-                    <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
-                        <label style="font-size:13px;color:var(--muted)">Notifications</label>
-                        <input type="checkbox" id="enableNotif" />
-                    </div>
+                    <!-- Notifications checkbox removed per user request -->
 
                     <div style="margin-top:12px;font-size:13px;color:var(--muted)">Tip: The app stores data locally in your browser. For persistent notifications when the page is closed consider installing as a PWA or keeping the page open.</div>
                 </aside>
@@ -159,7 +156,7 @@
                 </section>
             </div>
 
-            <footer>Built with Tesseract.js for OCR (loaded from CDN). Hints are generated locally or via OpenAI (via local proxy) and deliberately avoid solving problems for you.</footer>
+            <footer>API from OpenAI — smoother, cleaner.</footer>
         </main>
 
         <!-- Modal: Add/Edit Task -->
@@ -340,9 +337,11 @@
             document.getElementById('nextMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);renderCalendar()});
             document.getElementById('todayBtn').addEventListener('click',()=>{viewDate=new Date();state.selectedDate=new Date().toISOString().slice(0,10);renderCalendar();renderTodoList()});
 
-            // Notifications
+            // Notifications (checkbox removed from UI) — guard access
             const enableNotif = document.getElementById('enableNotif');
-            enableNotif.addEventListener('change',()=>{state.notifEnabled = enableNotif.checked; localStorage.setItem('sh_notif', state.notifEnabled); if(state.notifEnabled) requestNotificationPermission();});
+            if(enableNotif){
+                enableNotif.addEventListener('change',()=>{state.notifEnabled = enableNotif.checked; localStorage.setItem('sh_notif', state.notifEnabled); if(state.notifEnabled) requestNotificationPermission();});
+            }
 
             function requestNotificationPermission(){
                 if(!('Notification' in window)) return alert('Notifications not supported in this browser');
@@ -576,7 +575,7 @@
             // Load state & init
             loadTasks();
             loadState();
-            enableNotif.checked = state.notifEnabled;
+            if(enableNotif) enableNotif.checked = state.notifEnabled;
             renderCalendar();
             renderTodoList();
 

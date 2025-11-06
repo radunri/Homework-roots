@@ -5,60 +5,86 @@
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>Smart Homework Organizer</title>
         <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
-        <style>
+    <style>
             /* Dark theme variables and improved color palette */
-            :root{
-                --bg1:hsl(217, 41%, 10%); /* page background */
-                --bg2:hsl(220, 49%, 8%); /* panel background */
-                --card:#071127; /* darker card */
-                --muted:#9aa4b2;
-                --accent:#7c5cff; /* violet */
-                --accent-2:#00c2a8; /* teal */
-                --accent-3:#ffd166; /* warm yellow */
-                --glass: rgba(255,255,255,0.03);
+            :root {
+                /* Palette from attachment */
+                --dark-1: #2C231C; /* very dark brown */
+                --warm-1: #B59E7D; /* warm tan */
+                --warm-2: #CEC1A8; /* light beige */
+                --light:  #F1EADA; /* near cream (text on dark) */
+                --green-1: #768064; /* muted green */
+                --green-2: #4C583E; /* deep green */
+
+                --bg1: var(--dark-1);
+                --bg2: var(--warm-1);
+                --card: #3a352f;
+                --muted: #CEC1A8;
+                --accent: var(--green-1);
+                --accent-2: var(--green-2);
+                --accent-3: var(--warm-1);
+                --glass: rgba(241,234,218,0.04);
+                --text: var(--light);
             }
             *{box-sizing:border-box}
             body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,0.08), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6eef8;min-height:100vh}
+            body {margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--dark-1) 0%, var(--warm-1) 20%, var(--warm-2) 40%, var(--light) 60%, var(--green-1) 80%, var(--green-2) 100%);color:var(--text);min-height:100vh}
             header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px}
             .brand{display:flex;align-items:center;gap:12px}
-            .logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:inline-flex;align-items:center;justify-content:center;color:#061225;font-weight:800}
+            .logo{width:48px;height:48px;border-radius:12px;background:var(--warm-1);display:inline-flex;align-items:center;justify-content:center;color:var(--dark-1);font-weight:800}
             .container{max-width:1200px;margin:20px auto;padding:18px}
             .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
 
-            /* Panels */
-            .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
-            .panel h2{margin:0 0 8px;font-size:16px;color:#eaf0ff}
+            /* Panels (flat, bright) */
+            .panel{background-color:var(--warm-2);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);border:1px solid rgba(76,88,62,0.06);color:var(--dark-1)}
+            .panel h2{margin:0 0 8px;font-size:16px;color:var(--dark-1)}
             .todo-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-            .task{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;background:var(--glass)}
+            .task{padding:10px;border-radius:10px;border:1px solid rgba(76,88,62,0.06);display:flex;justify-content:space-between;align-items:center;background:rgba(241,234,218,0.6)}
             .task small{color:var(--muted)}
             .task .actions{display:flex;gap:8px}
-            .btn{background:linear-gradient(90deg,var(--accent),#5f79ff);color:#061225;border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
-            .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(124,92,255,0.18)}
-            .btn.warn{background:linear-gradient(90deg,#ff7b7b,#ff4d4d);color:#120406}
+            .btn{background-color:var(--green-1);color:var(--light);border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+            .btn.secondary{background:transparent;color:var(--green-1);border:1px solid rgba(118,128,100,0.18)}
+            .btn.warn{background-color:var(--warm-1);color:var(--dark-1)}
 
             /* Calendar area */
             .calendar-wrap{display:flex;flex-direction:column;gap:12px}
             .cal-header{display:flex;justify-content:space-between;align-items:center}
             .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-            .cal-day{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(255,255,255,0.02)}
-            .cal-day .date{font-weight:700;color:#eaf0ff}
+            .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
+            .cal-day .date{font-weight:700;color:var(--dark-1)}
             .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
             .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
 
             /* OCR / Hints area */
             .ocr-area{margin-top:12px;display:flex;gap:12px;align-items:flex-start}
-            .ocr-area textarea{width:100%;min-height:88px;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);color:#eaf0ff}
+            .ocr-area textarea{width:100%;min-height:88px;padding:12px;border-radius:10px;border:1px solid rgba(76,88,62,0.06);background-color:rgba(241,234,218,0.9);color:var(--dark-1)}
 
             footer{margin:28px 0;text-align:center;color:var(--muted);font-size:13px}
 
             /* modal */
-            .modal{position:fixed;left:0;top:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(1,3,9,0.6), rgba(1,3,9,0.6))}
-            .modal .box{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px;max-width:540px;width:100%;border:1px solid rgba(255,255,255,0.03)}
+            .modal{position:fixed;left:0;top:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45)}
+            .modal .box{background-color:var(--warm-2);padding:16px;border-radius:12px;max-width:540px;width:100%;border:1px solid rgba(76,88,62,0.06);color:var(--dark-1)}
 
             @media (max-width:920px){.grid{grid-template-columns:1fr;}.container{padding:12px}}
 
             .cal-day:hover{
                 background-color: #9aa4b2;
+            }
+            /* Inputs styling for task modal */
+            input, textarea {
+                background-color: var(--light);
+                border: 1px solid rgba(76,88,62,0.12);
+                color: var(--dark-1);
+                padding:8px;
+                border-radius:8px;
+                outline: none;
+            }
+            input:focus, textarea:focus{ box-shadow: 0 6px 18px rgba(76,88,62,0.08); border-color: rgba(118,128,100,0.32);} 
+
+            /* Style file input button with 15px radius */
+            input[type="file"]{ border-radius:15px; padding:6px 10px; }
+            input[type="file"]::-webkit-file-upload-button, input[type="file"]::file-selector-button{
+                border-radius:15px; background-color:var(--green-2); color:var(--light); border:none; padding:8px 12px; cursor:pointer;
             }
         </style>
     </head>
@@ -126,7 +152,7 @@
                                     <button id="genHintsBtn" class="btn">Generate Hints</button>
                                     <button id="copyHints" class="btn secondary">Copy Hints</button>
                                 </div>
-                                <div id="hintsArea" style="background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);min-height:60px;color:#eaf0ff"></div>
+                                <div id="hintsArea" style="background-color:rgba(241,234,218,0.9);padding:12px;border-radius:8px;border:1px solid rgba(76,88,62,0.06);min-height:60px;color:var(--dark-1)"></div>
                             </div>
                         </div>
                     </div>
@@ -156,17 +182,67 @@
         <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
         <script>
             // Basic SPA state
-            const state = { tasks: [], selectedDate: new Date().toISOString().slice(0,10), notifEnabled: false };
+            const state = { tasks: [], selectedDate: new Date().toLocaleDateString('en-CA'), notifEnabled: false };
 
             // Utilities
             function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
             function formatDate(d){return d}
 
-            // Storage
+            // Storage + date helpers
+            function pad(n){return String(n).padStart(2,'0')}
+            function todayISOLocal(){const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+            function normalizeDateInput(s){
+                if(!s) return '';
+                s = String(s).trim();
+                if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s)) return s;
+                const m = s.match(/^\s*(\d{1,2})[\.\-/](\d{1,2})[\.\-/](\d{4})\s*$/);
+                if(m){
+                    // Interpret ambiguous numeric dates as day-first (dd.mm.yyyy) unless month > 12
+                    let d = parseInt(m[1],10), mo = parseInt(m[2],10), y = parseInt(m[3],10);
+                    if(mo>12 && d<=12){ const tmp = d; d = mo; mo = tmp; }
+                    const day = pad(d); const month = pad(mo);
+                    return `${y}-${month}-${day}`;
+                }
+                return s;
+            }
+
             function loadTasks(){
                 try{state.tasks = JSON.parse(localStorage.getItem('sh_tasks')||'[]')}catch(e){state.tasks=[]}
             }
-            function saveTasks(){localStorage.setItem('sh_tasks',JSON.stringify(state.tasks))}
+            function saveTasks(){localStorage.setItem('sh_tasks',JSON.stringify(state.tasks)); saveState();}
+
+            function saveState(){
+                try{
+                    localStorage.setItem('sh_selectedDate', state.selectedDate || '');
+                    // store view month as YYYY-MM to avoid timezone shifts
+                    try{ localStorage.setItem('sh_viewDate', viewDate.getFullYear() + '-' + pad(viewDate.getMonth()+1)); }catch(e){}
+                    localStorage.setItem('sh_notif', state.notifEnabled ? 'true' : 'false');
+                    try{localStorage.setItem('sh_ocrText', document.getElementById('ocrText').value || '');}catch(e){}
+                    try{localStorage.setItem('sh_hints', document.getElementById('hintsArea').innerText || '');}catch(e){}
+                }catch(e){console.warn('saveState failed', e)}
+            }
+
+            function loadState(){
+                try{
+                    const sd = localStorage.getItem('sh_selectedDate');
+                    if(sd) state.selectedDate = sd;
+                    const vd = localStorage.getItem('sh_viewDate');
+                    if(vd){
+                        const m = String(vd).match(/^(\d{4})-(\d{2})$/);
+                        if(m) viewDate = new Date(parseInt(m[1],10), parseInt(m[2],10)-1, 1);
+                        else {
+                            const parsed = new Date(vd);
+                            if(!isNaN(parsed)) viewDate = new Date(parsed.getFullYear(), parsed.getMonth(), 1);
+                        }
+                    }
+                    const o = localStorage.getItem('sh_ocrText');
+                    if(o) try{document.getElementById('ocrText').value = o;}catch(e){}
+                    const h = localStorage.getItem('sh_hints');
+                    if(h) try{document.getElementById('hintsArea').innerText = h;}catch(e){}
+                    const n = localStorage.getItem('sh_notif');
+                    state.notifEnabled = n === 'true';
+                }catch(e){console.warn('loadState failed', e)}
+            }
 
             // Calendar render
             const calGrid = document.getElementById('calGrid');
@@ -189,7 +265,7 @@
 
                 for(let d=1;d<=total;d++){
                     const dt = new Date(viewDate.getFullYear(),viewDate.getMonth(),d);
-                    const key = dt.toISOString().slice(0,10);
+                    const key = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
                     const cell=document.createElement('div');cell.className='cal-day';
                     cell.innerHTML = `<div class="date">${d}</div><div class="dots" data-date="${key}"></div>`;
                     cell.addEventListener('click',()=>{state.selectedDate=key;renderTodoList();});
@@ -239,7 +315,9 @@
             function closeModal(){modal.style.display='none'}
 
             document.getElementById('saveTask').addEventListener('click',()=>{
-                const t = {title:taskTitle.value.trim(),date:taskDate.value||state.selectedDate,time:taskTime.value,desc:taskDesc.value};
+                const rawDate = taskDate.value || state.selectedDate || '';
+                const isoDate = normalizeDateInput(rawDate) || state.selectedDate || todayISOLocal();
+                const t = {title:taskTitle.value.trim(),date:isoDate,time:taskTime.value,desc:taskDesc.value};
                 if(!t.title) return alert('Please give the task a title');
                 if(editingId){
                     const idx = state.tasks.findIndex(x=>x.id===editingId);
@@ -272,6 +350,19 @@
             }
 
             // Check due tasks every 30 seconds while page is open
+            function buildDateTimeFromParts(ymd, time){
+                if(!ymd) return null;
+                const m = String(ymd).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                if(!m) return null;
+                const y = parseInt(m[1],10), mo = parseInt(m[2],10)-1, d = parseInt(m[3],10);
+                let hh = 0, mm = 0;
+                if(time){
+                    const p = String(time).split(':');
+                    hh = parseInt(p[0]||0,10)||0; mm = parseInt(p[1]||0,10)||0;
+                }
+                return new Date(y, mo, d, hh, mm, 0, 0);
+            }
+
             function checkNotifications(){
                 if(!state.notifEnabled) return;
                 if(Notification.permission!=='granted') return;
@@ -279,7 +370,8 @@
                 state.tasks.forEach(t=>{
                     if(t.notified) return;
                     if(!t.date || !t.time) return;
-                    const when = new Date(t.date+'T'+t.time);
+                    const when = buildDateTimeFromParts(t.date, t.time);
+                    if(!when) return;
                     const delta = when - now;
                     if(delta<=0 && delta>-60000){ // due within last minute
                         showNotification(`Task due: ${t.title}`, t.desc||'');
@@ -483,7 +575,7 @@
 
             // Load state & init
             loadTasks();
-            state.notifEnabled = localStorage.getItem('sh_notif')==='true';
+            loadState();
             enableNotif.checked = state.notifEnabled;
             renderCalendar();
             renderTodoList();

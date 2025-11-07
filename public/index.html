@@ -49,16 +49,19 @@
             .calendar-wrap{display:flex;flex-direction:column;gap:12px}
             .cal-header{display:flex;justify-content:space-between;align-items:center}
             .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-            .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
+            .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06);position:relative}
             .cal-day .date{font-weight:700;color:var(--dark-1)}
             .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
             .cal-day-selected{background-color:black;padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
             .cal-day-selected .date{font-weight:700;color:var(--dark-1)}
             .cal-day-selected .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
             .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
+            /* per-day small add button */
+            .day-add-btn{position:absolute;right:8px;top:8px;display:none;padding:4px 6px;font-size:12px;border-radius:4px;cursor:pointer;background:transparent;border:none;color:#000;font-weight:700}
 
             /* OCR / Hints area */
-            .ocr-area{margin-top:12px;display:flex;gap:12px;align-items:flex-start}
+            /* make columns stretch to the same height so the side image can fill its column */
+            .ocr-area{margin-top:12px;display:flex;gap:12px;align-items:stretch}
             .ocr-area textarea{width:100%;min-height:88px;padding:12px;border-radius:10px;border:1px solid rgba(76,88,62,0.06);background-color:rgba(241,234,218,0.9);color:var(--dark-1)}
 
             footer{margin:28px 0;text-align:center;color:var(--muted);font-size:13px}
@@ -111,6 +114,9 @@
             /* Keep thumbnail sized and not increasing container padding/height */
             .file-picker img{width:32px;height:32px;flex:0 0 32px}
             .file-picker span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;display:inline-block}
+            /* Side image container (left column) */
+            .side-image-wrap{width:100%;flex:1;display:flex}
+            .side-image-wrap img{width:100%;height:100%;object-fit:cover;border-radius:8px}
             /* hide native input while keeping it in DOM for JS access */
             .file-input-hidden{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
         </style>
@@ -167,7 +173,7 @@
                     <div class="panel" style="margin-top:12px">
                         <h2>OCR & Hints</h2>
                         <div class="ocr-area">
-                            <div style="width:320px;display:flex;flex-direction:column;gap:8px">
+                            <div style="width:320px;display:flex;flex-direction:column;gap:8px;align-self:stretch;min-height:0">
                                 <!-- custom file-picker for image input (native input kept hidden for JS) -->
                                 <label class="file-picker" for="imageInput" title="Upload image">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16" style="margin-right:10px;vertical-align:middle;">
@@ -184,14 +190,16 @@
                                 <!-- moved ICS file input here (was previously in the header) - custom picker -->
                                 <label class="file-picker" for="icsFile" title="Import .ics">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16" style="margin-right:10px;vertical-align:middle;">
-      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-      <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
-    </svg>
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+            </svg>
                                     <span style="font-weight:600;text-align:center;">Import .ics</span>
                                 </label>
                                 <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />
-                                <div style="font-size:13px;color:var(--muted)">.</div>
-                                <div style="margin-top:8px;font-size:12px;color:var(--muted)"></div>
+                                <!-- Side image: fills the remaining left-column space and sits next to the OCR output -->
+                                <div class="side-image-wrap" style="flex:1;display:flex;align-items:center;justify-content:center;">
+                                    <img id="sideImage" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAWEAAAGQCAYAAABb8P0UAAAXL0lEQVR4nO3de4wc5X0H8O+amZ17/thx4PsN2OCYHr3YQAiBEgdUiANpXfdUjQpNgqFBRKREaaO2VaSqSkSVkNKqaaREkSFNKpRQIiCEQEEEECCEGBMSGwiwsY3BxSYx9h3e9XnXt3c7O/36x/P7xTu7e7P3s7G9O/t8pD/O2Z2Znb3x/PZ5nnl2RkZmJgCAkjm5LwBU3emdP+vY6X6nulcCVNPYvl2i3dUbaqU+r4y0ShAAKJXX6QMArO5CuzO26Zsvn94w+ezPOp7v1nWBKuhWrFRX0RdBAGWgEAaokwN5fwVUR5QsWskG4tgNNWvWLNmyZYsAFXbgwAE5cOBA5cZkPRVgALEw/wNUG9O/gIoTqWB8UVHF/pNPu3btkhkzZsjIkSM7ft7+/ftl586d3Tr/1q1bO/RQKOxESFqsXr1aJk+eHHx/5513ZN26dVyf6BP5QzzxxBPyyiuv5L3u17/+tfzgBz/I/cbo7HWtdpPv3LlTZsyYIXfccYe8//77cuTIERk7dmzu49etWyc33XSTnD17VsaOHSszZ86U9evXy/79+2XixIkyf/58eeutt2TRokXyn//5n52/ImJ0vIIvF9KFQbiwDhw4ILNnz45tc7DTgXg2uguj9I2mk23ou+++k6VLl8o3vvENefbZZ+VXv/qVPPzwwzJ//nyZPHmyPP744+I4jixZskQefPBBeeihh+TChQtRz3XgwAHp06ePjB07Vvr27dvpoE6DAtwZ3G7t7OS3uyrFGACFBPUr2vDnswqu5NAQjjtG3vNVVMAxxNvnbtFiTlGdRVcXR5JOCKLKwhRdUydt8Tpi3nBn5+Qx2x5GBwd2JgCAopFeIXKieBLJv9NUSqFhGEUFyGUBwKJGOMuahoiPwfB5RBQPPv1JAq5ZcUhXQFA+rDl8O6CdFOJZGuVZBeRVZDwv7+Ll6n0lM0A3t0g7FzAj8AH+2Z3lvQHQR2eFQcSPAlRF56YjgPwpXAArwByZSfAg/XS+Y3IowAC6oVvNVFwRVgUAHGwAUFT4iDBI3CG5AD8U/GqooJjZQOCi0YQBVI5PNQlQFGMAh+YFfFz8GqCXqj3V2AFeib5chRPHFYbDK4oxgBqiGAMVVfpPOq9CakuXDqqAEovPPOG8lxroQkrqubJ+xqAalY8CDFQQxRhAB/lMRwDlUE4/Mdkl1bnsohIdfF2ZHY9xKNEAeBJrA1LF1HdcDHFBUJgBVBbFmPBlYrQESnhfB6ikQguguALsF4zuXUAhAHgbZuZDlaeiCPiJDWJJXxVkQYcAKooCDIjkyj/ulGN+6VMhXRVFJ1EFGCWXHWVq7qy5KbqC+osrwOma8VqACohOfqbXHYmpUGN1eBUGhJhG6DF57MPt20O7A+hC/j4VT3/yM6NLUeUJAEoh/0fMY1FRAEqnCp+1WzkUX3QGjxCEmz/M2+2mBs06mXAcE5KM5miqUmyvRSWOOKMnypV2Tp7rVszBKKBjugfFU3z6V1z3cvpb6QfAAqhBdXQVW4ABIJerUyEoYxp2FA0KDwoLc4RRNlVsF1HDADqMs+lxvgRQIf5BGIDNT50UUARBnVQz/ygDqB6KL6oucrkH4MpgYFBAoG0KL+qhYgsWoGoowhEoGkClcXoN1EXpBdjW5vVFQ/UDKELx4R+uVr+x3xjeigAg1RIY0GSpxgBKkWIMlE05nQnFFADgp5rp0SXFA3UYfEjLDgAAUa7olOn8/83ErFQKADVBmzSAKqL4AWJPhyZbNwFAkSi+AEqAQgsA6CYKMICCMeGDzNjPQDwKNQCgQmxBzvJ9ADVUrU6ApFtxPgMAOqNi87C6dm0EgDSq0I4BACWQOQKZqxkAqBSKMFBipQ9MAACKwHoGQDXRJoCMKL4AAMSJm2G7+LEXwO6QQEEUMUUD6ASKb0F4xAMAlGj6V14Xi0KOslBiAQAAsqsUoTJrAFvSysgPAHVAAa4pCjeAiq0pgRqiCKMOaBd1QosFegiFF6hAIy19XjSA6qJQA9E6PGJLpVCMAQDIgA6uIJxdAADk0lUWFw0AQJlRdgGUkbSskRI8cTD6+lc+xVvogU7APD6DuXkAAAC1lZZ/AACVROYAaoKCi7qgz0VRNP4X0DTjbYH2DMBLdaYjGPwAgOrxKcwUYAAAUIe0FVRAzaZjU+2YgQaQAc1CANaVjqwAAGRWK9UODD1YUym4AAAgL2sVA0CDe4h50A5FGkAd2RkOAEBWxKhIXXlsh3EQVVEiQMFYCwFADZU+5QsAqgI8FY8A8/bhpaRxrFJTxEACCi8A9CzFrLJ2yJkuBNF1AFAT3YocUBAFEqgKGh6AouTOsSo6y/0Ud1QOAKCCKNEAgAD5BwCA0uFnDysur99JFABQBUWlc1CAgZJQ7QwJMbegCEVkOUCaSpZgAGgZBRQA6sJzCVROSkxBOObwEKwrU1GFpcQACuaBIAcAFKrqAZ9OIApUow6E8kPEFKg0ihAAqg2f6QgAgLgoHmoMPLlgRWFiAQXQNhLdgqgyDagWKj/YAwB6Vub3GlU6u1TbpSIxGQpAjyABHIoiKJlOh6LAAUAH5clpbilA3RZXgDvTAeY6EAD0CGYjSqlyPcnwUvUZRLZqvCgRdQCcVVSoAEWZAXsX7QIAIKgiqGYUXgAVRBEGAPRYyrT39BO2roQB/W4AQO1RKwEAABJUawoEAFAYsRHaedsogAAyYLQEoCqoLACiccIBACWqxFRuhUVmGoQe6ZGGjVTotlBBVRodK4Mi3JkBiIq2HsCNsMG4h9HCAKDGKJMACiUdK6Hj4iujBVGAUXeVWoEOAFBxVGQA6CoKMFAhVa9dFGmgdBjQQA2V/YA3qHtFGmhDcKhGkBFfhLN87kLSpwFUBcUVAIASq0AFRhXnRdZ7hZGM+5DiBiA7GYuxf8fFtwQAJDtUJw7WDIvx0HZtFWd/LWrdFRR3wJkv+2sBAPQoVgxDtVW99BsFt3gAQM3RxAGgq+jAAZRKD/5GmZ6tPAVQaSzPAQBAFhXJhwKA2KwEAABdlS/o0k5bKgRCrJsX7J3tUB2pGDIwAELVs2uFQTcEVVC+T24FgBiRw5KoAkwHDQCoNapQ6VVueYCqlF4AZK9qx6EShDJ/MRbRrQYAiEqsEavxIm5bHtciUBU0NNRQjUdZsErIWK4CAOHO6cAPG1R7ZyoFAADIDH4quphB2wKAQpVYsAQIEy0BAJUiWnQY9UGFBIAuqURxCENHDQCVQlHtUQkdFQUGAFADJ/fvxDg+zFIZAQAAgNKpXaSgj46tYGBeYIsCCNRGrYsvAADlQb4WAAAAAAAA6sGhiAIAkKzb7xG2AtM4xmvVGIM6AOhB9EYAyoVKCoByXQxJDeqRZzGtYACA4lT+KlU7l9kA6H9lJlUBoOiCgWB1DEgAAEqnTlmn9FL9UFvhVZEBFKNKQ1QGXoDHWUVCBViwHmAVPSBJdIpijNg0B4oXgDJhRaLS4bkcAICyOHFgB6MfAIAOGx91pdwAUBfOWHtQQfUCAGRW+RGKWqRAAwBQQ5T4kkoY2QAAAE+1kMGDobuK/QwnBQJAWZReYNF3A+hplORKSipXtVAHVLJVV+HGVu5BHUDPqU7cSEDxBSqtQn3lzYsWV1lvSYE0nV+TpyYfACiwpYU0SZgYwdXeHgBAp3FnE4CyY8QEAFBtBQehmIYVcf3UAyIiXs0RXU4bBQBcVHvFV6zoHYUKADqiOgUYdXfkFxQcE6PAhMAeRdNBr6A6VmLIclKhBbxMWfswAYK9DqAo7HugSEKncjHEhfQWRQd6cO0x0QIVo7wCI0Ia+9gYAYAY+eGFOggASJf4m8kV+mGkPbfPdwEA6LBg9YL3M3DRQPQxEQAuJqmSN5+8Fjr4GV73KEUy4jnBMYhHEwRAFQEAEGB1GigRigSAFlQnBaK+LtZbAKiUULe3ZesKWAlhHVFN0YICBgCoIuvXHFUPqwEAUKmUqPmuRnibX2SJJdfzAgDgRxJwx4r/CFkj4A0KVo6CKSLiHaWSGwB6qwRPRbEHAMBAhE1AAyilhBlEGMYkAVBJ3X3DkU4YQAXV7o3FAACg2+JCFABAe0L5V8Ysl4ujnqIuhfEIACqL4guAYAagNopKauWwBlAXBpf6jBGhGACoMw6BACVEYQTQTt6uAE7uTrWgRlCkASDr+GcEKZQHRRhAVFe9/Y2EyR5XgpEDUE5UPwBlRjstoxZNu0oPYQ5QUEFjuE0uCjBQccoOBABAB8XFbQdQUlRiAChShesWRRjFqvS1BICLKMAAKicxYb9aF5K2BwCRIksZUxEoNwCACjPeh/H6UQcrEwTQtPQwGN8pJnSa1qbgBanFVwgARVdFhQMAKuXPi+KAAlBEBlMJqBzlBGiBQgtRBSoOsRtAGHsXyO9i1oVDxQYKo5z31QMAyq9qwYYKi2qiQOWxQAyA0sr6lAkKAIAKqk4RqMsqA+iBZVyPXKz0QGEKu+MAygGdQhSX2I0sUIj9PCieiHRFjM+jWhPdLAIDp0reRQVQODq+GvEZDGINQKAiyjqYs8wDRQBoCcUXAFBS1HoAFEkAdXSxmyHyAIBaocQCAHoQ6T9BMEWzKktQa1D1QFRqCgIAUK1MQ0YHAKCiKLSWBcPPiA9AVUbLADLgyYpo2VYDaNqoQVEGUFmEI2RHyyylIksuAKjuICOoVw6SG6im6AYKlCk7nXWhv7YKE3sRQBZ+o+NFFF8KL0oIxn2y7bCojtkAUAU+OV2kuRzhJFsUhgIMAE9zZg2gNCi2FcjL6NCbWgACAAqVL7IHACgHosQBoCXuDGwOcLCI6z5VXgIB6DweJKsIVioEkF3oEYLwwQ0AyIgqCKB0KMgASqXc9/FwfQEAFGgAlcNGBFBbofPgiZk7qE7nEls9Q0JZDXwpA+EHr9GpBQC+yKErpgO4WAB6VkZbBdCj6PABIDhK3vxRiWm6yuCheqimXYc6DgAARZBWiQgbKKRKEGgRPVAA0AV0WEANMAKtKA4+pS97WK+oSBRgVBcpZqguCjBQWzEFmIMfQEnZaVyFhzsKMAAQEQMABaJyAICX3Cs29VS+HgAgLxPZAQBVUflWnGfqNgWYMr7urIUAUBPnXltOEQcAZGQK8IkDO87xVAMBgHJ1P7kvZY0e82e5J9kKBoCKoUwCQI+gyAKVI2SgAgAAoCagDQDRuF4AgLKIzLOi+AIAgHzq+UaOQkV+xv8HgILQYgAAQDdQxwEAaEVWHyZGfgYAoO4ovQAAIBUFFQBQAgekiM2vsKfdGV8dU0+8IQARlQJcwHFpUYAAVBlFBkCRGG7XVKMmHEPyKTumC2oAAIAa4zibhSoOAF3QkbvuKBrFFUBJFVd4AQCgkKEnda4GUoABoLTo6YFo2XOIqJoAyo9OHAAA5EMgRi+gCQKV5WcRpBDnitoSxtcBoKaowQDgkcoEAGVCUQaANPQMUNVV9lC46SGAE1jIACieXYQTCzHGM5uGXGII9D4AUAmUWgAAUGEUYAAASkRYNYAPii+AYIiBwdQUCwCZxOYsAQBqhJw7AKih2GJLWQYAoMdFZXiZ2x4fAZZpDwCgqYrLEVB4AQDIKu7d/BUhm43xCgDVRK4X2qU68udhgsw+WXmexQDQY3QMAABUBGUXAABUUbkLcLmXHQBqrQO3F1N4AXQCd+RUCwUYoWDCnuXXAgBapqR9m0wuAEAVUIABAKgNiiWAIkQM1+mGAHQe3SlQPtRXACB1EQBQJAoEAKDyGI5QR1FXJWGmiqIswg2xpMkAgIIwugGoM1KecNE5DwcVAlBFVAEA6CzKN9A1tBCgxNotwBRbAEBP4pICkSjCKAuFBwBQDEKMKC9A10kHDywAoMYovwCA+mF9MABBAzEFvAfQwCtKBR3Q5BxAQTiJAOB2OKAkKL4AAD8UYKC6qFAAkAepMKgRiT1eCTwAYK9Y7bOXiqBEB4ASpJnmFEoABYK0vYhOCABQM4nLPFSxQoXiZ31jxJmCgFJMnf9cp0Z5WCOvs6LyFSKyKIMyuQruaB5wg4CfrhZgCvzFEZNpAVB4gjcXo0bQaXR5Wh0oCIBANYrbLwCgPizd+wDWLQDQVRTg2qlgsQOADjGeb6hKtUKVgFPMqNtDGnplHgBwJTYATZWXVhRuiLXPB/cZ4wBkQEkFADe7FhArAcSnAAMAAFQQBRgAKo2/SA8KLwCxZfEGAKA66G4BAH5IrQWAQC0EiEY0NmkLJX0TANBF3CYLADXkOz2BkQeACIwIylUBNV4BV4wElBA5BQAAVAo1HQDQDAUYAADALbUAHzuwI9MNNJ3ojbRjMJyF2KahL5IvFqGYkRwBAAD8aWcBAAAAElDFSqLWYZkiCgBApfRchaNcA0CV8+3QKjruXkV9BgAAAAAAAAAAAFBzTM0GKFIVBgoAgBKg3RVqalPNXwGoUgEGAABlQT0HAACdoFxscM4EAACoLc4WAABQbVPQFqyyCmBBynAi1DtnNQAoNQJIxVAUAQBFM0YWlDxGUVQjlD0gUHYBVBWJ0EBVcEED1BcFFgCALDIUYAowABSE2CQGOoAuCQBQGV0twM3H9+wTAKgraqmX/8HCvwEQw4lZe1SLFqyM9RdEHUDVUGoBAADQvzyWWC5TbgrY/AUAUC2JN4KgA5p39nHdAgB6AAUYKAW+CAD6GCWgAucKUK4BAOgmii8AAEVLWyTVGP6xsAAAAEBf4fYMAFAFLa8X0VoB0hmOMJ0hYr+sEQEA1UVdAYC6o3wCNdTR2w6DxTdyyAEAqAcyswC0jOILAEBk5w4AJUNdBgBUBoUaANBNFGAASMZgDgDCRfTQ4q7OHFQmgB7BxDkAALWQUtE4muQi3EAFoM7YSQBQOBozADSQlwUAQHlQbAEAFUbJBYBq48YGVFFlVxkJRBhNaeUYAFAuFN4aqky1Q+s4b6gaEzqoAwoWHu9zXpBhSuOi8IqrtxJbeYkAADQQVlFCFGYAOZwc/2Zl+xugdrryXnEAAOqEwgygrCpbGSmgAFAqFF9UU4EXljEbAB3hUBBQE2wNoApU0qgUAIAqJhPQKwAIoEwDKAhFHLXB0AKoBKomgBK7ODyhyAIAUDEUYNSE8/qQ0KrIp9YtCNwIB6BgFGAgyOWV2ovv2YzuhwHQAYwIACqoKOW+9QMAAAAAeCBBF6go0+foFcgHwM+h1V4UYAAAgFUiImJqeIXx63/UXGcBaAXFF8iJIQUoGYovAMBjoHOvXz5LFXn9JL31uP6TnXf67v+1H+xtPz4MwB9fQAg7FgA6osuFgjvQAEBYNwD4qFgOF0kRQCsOv7k1uk0CQOXQAQEAUA4UYAAAAPip0GX51p/8gEUAqoOeBah0pUUFUHwBVFQVEiHQIWVcgYEaAAAAAAAAAAAAAAAQ6D1plkANKJ8iHNcIAQBATNrlQUcJFI1KiFKp7q8Xk9YFIIIWZmDx2qK1qdoSACggqiFGM/5WBYQ9yosCKKKC2qfQbpDK2CB/DA/pgbFIqDR6QgAAAFVF0gVQccQ4AIEiwwgDQBmV9nE2dBEAgOJ1pCCYDj9wUE6qhmLkH0UorATbEJyLwHXgZQBAISkWQDI74ilLtaELvPjkKPAtlahqFIxwYyJmH9BygEQUXgAAACAWQzGgArrVw7GAHYBOoV1mV9H6TMkGAKB6Mhbg0yU5BxkDnXQPYd0kAB2RWICBTvAptZRcAEDJuHY9BRIA4KmD66BQgKuKRgwUx3XxDoowAABlRQEGAFQawZEVAZ4I+wDdRA8IAAAAAAAAoCW+QYVhHzqv2zeBUYwLwYgHKB1qOVApVUuGdL5stM0lEqwrvEZOyTYOXjBQVnV7gqNEGP8Rc1kEhX2nOABXUUhRIuzLTmdGhRdqgAEQQEnRKwMAAMQ6uX8n7zcB0IpyLgGQLy2ZjhUASgEBAHQKxRd1QRcX6GrZguDX6DUU56yDNLsHXfUXh01DHwGgAphKRlQZAKqDJgygsyjA6FGVqbsUaHSEuFKOeZA0NnuNwQCAqiiksaSF9FhyBEm16AQup4kBABqoHKBETRGgylpOMqbwAgBQLZmW+QEAAAAAAAAqlWrVAWQLAPDDVBEAAAAAAABQOCZ7Az2A22IBAACAVvzfAAAA//8DAM2xjYstBf6UAAAAAElFTkSuQmCC" alt="visual" style="width:100%;height:100%;object-fit:cover;border-radius:0;border:0;display:block;" />
+                                </div>
                             </div>
                             <div style="flex:1;display:flex;flex-direction:column;gap:8px">
                                 <textarea id="ocrText" placeholder="OCR output or paste problem text here..."></textarea>
@@ -292,6 +300,10 @@
             }
 
             // Calendar render
+            // Helper: hide any visible per-day Add buttons
+            function hideAllAddBtns(){
+                try{ document.querySelectorAll('.day-add-btn').forEach(b=>{ b.style.display='none'; b.style.left=''; b.style.right='8px'; b.style.top='8px'; }); }catch(e){}
+            }
             const calGrid = document.getElementById('calGrid');
             const monthLabel = document.getElementById('monthLabel');
             const selectedDateHeader = document.getElementById('selected-date');
@@ -353,10 +365,26 @@
 
                     const cell=document.createElement('div');cell.className='cal-day';
                     cell.innerHTML = `<div class="date">${d}</div><div class="dots" data-date="${key}"></div>`;
+                    // Left-click on the cell selects the date
                     cell.addEventListener('click',()=>{ setSelectedDate(key); });
                     if (key === state.selectedDate) {
                         cell.className = 'cal-day-selected';
                     }
+                    // Add a small per-cell Add Task button that opens modal for this date
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'day-add-btn';
+                    addBtn.type = 'button';
+                    addBtn.textContent = 'Add task';
+                    addBtn.addEventListener('click', (e) => { e.stopPropagation(); setSelectedDate(key); openModal(); });
+                    // show the add button only on right-click (contextmenu)
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        hideAllAddBtns();
+                        // show the add button at the top-right corner of the cell
+                        try{ setSelectedDate(key); }catch(err){}
+                        addBtn.style.display = 'block';
+                    });
+                    cell.appendChild(addBtn);
                     // show small dots for tasks
                     const dots = cell.querySelector('.dots');
                     const tasks = state.tasks.filter(t=>t.date===key);
@@ -442,7 +470,7 @@
             const taskDesc = document.getElementById('taskDesc');
             let editingId = null;
 
-            document.getElementById('addTaskBtn').addEventListener('click',()=>{openModal()});
+            document.getElementById('addTaskBtn').addEventListener('click',()=>{ if(!state.selectedDate) state.selectedDate = todayISOLocal(); openModal(); });
             document.getElementById('closeModal').addEventListener('click',()=>closeModal());
             function openModal(task){
                 modal.style.display='flex';
@@ -552,6 +580,10 @@
             const ocrText = document.getElementById('ocrText');
             const runOcrBtn = document.getElementById('runOcrBtn');
             const genHintsBtn = document.getElementById('genHintsBtn');
+
+            // Hide any visible per-day add buttons when clicking elsewhere or opening context outside days
+            document.addEventListener('click', ()=>{ hideAllAddBtns(); });
+            document.addEventListener('contextmenu', (e)=>{ if(!e.target.closest('.cal-day')) hideAllAddBtns(); });
             const hintsArea = document.getElementById('hintsArea');
 
             // show selected image filename and thumbnail inside the upload label
@@ -853,6 +885,32 @@
 
             // expose for debug
             window.SH = {state,save:saveTasks,load:loadTasks};
+        </script>
+        <script>
+            // Fallback: if the external image fails to load (missing file), replace it with an inline SVG so the area is not empty.
+            (function(){
+                const img = document.getElementById('sideImage');
+                const wrap = img && img.parentElement;
+                function showInlineTree(){
+                    if(!wrap) return;
+                    wrap.innerHTML = `
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
+                          <rect width="100%" height="100%" fill="transparent" />
+                          <g transform="translate(100,120)">
+                            <path d="M0 0 C -20 -10 -40 -40 -40 -60 C -40 -90 0 -120 0 -120 C 0 -120 40 -90 40 -60 C 40 -40 20 -10 0 0 Z" fill="#000" />
+                            <rect x="-8" y="0" width="16" height="40" rx="2" fill="#000" />
+                          </g>
+                        </svg>
+                    `;
+                }
+
+                if(img){
+                    // if image already failed to load
+                    if(img.complete && img.naturalWidth === 0){ showInlineTree(); }
+                    // attach error handler
+                    img.addEventListener('error', showInlineTree);
+                }
+            })();
         </script>
     </body>
 

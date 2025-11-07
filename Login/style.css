@@ -5,10 +5,10 @@
     font-family: "poppins",sans-serif;
 }
 body{
-    background-color: #2C231C;
+    background-color: #d3b985;
 }
 .container{
-    background: #CEC1AB;
+    background: #B08563;
     width: 450px;
     padding: 1.5rem;
     margin: 50px auto;
@@ -21,7 +21,7 @@ form{
 }
 .form-title{
     font-size: 1.5rem;
-    color: #F1EADA;
+    color: #6b4236;
     font-weight: bold;
     text-align: center;
     padding: 1.3rem;
@@ -32,7 +32,7 @@ input{
     width: 100%;
     background-color: transparent;
     border: none;
-    border-bottom: 1px soid #757575;
+    border-bottom: 1px soid #434242;
     padding-left: 1.5rem;
     font-size: 15px;
 }
@@ -58,7 +58,7 @@ input::placeholder{
     display: block;
 }
 label{
-    color: #757575;
+    color: #6b4236;
     position: relative;
     left: 1.2em;
     top: -1.3em;
@@ -86,11 +86,16 @@ input:focus~label, input:not(:placeholder-shown)~label{
 .btn{
     font-size: 1.1rem;
     padding: 8px;
-    border-radius: 5px;
+    border-radius: 2px;
     outline: none;
     border: none;
     width: 100%;
     background: #6b4236;
+    text-align: center;
+    border-radius: 10px;
+    text-decoration: #000;
+    color: #000;
+    font-family: Arial, Helvetica, sans-serif;
 }
     
 #signInButton a{
@@ -116,6 +121,7 @@ input:focus~label, input:not(:placeholder-shown)~label{
     padding: 0 4rem;
     margin-top: 0.9rem;
     font-weight: bold;
+    color: #000;
 }
 button{
     color: #000;

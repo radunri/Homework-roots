@@ -18,7 +18,7 @@ app.post("/chat", async (req, res) => {
         {
           role: "user",
           content: `
-Please respond ONLY in strict JSON format.
+Don't give exact answers, just HINTS or MOTIONS.Respond ONLY in strict JSON format.
 Include exactly two fields: "title" and "body".
 Message: "${req.body.message}"
           `

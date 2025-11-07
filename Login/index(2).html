@@ -9,11 +9,11 @@
 </head>
 <body>
     <div class="container" id="signup">
-        <h1 class="form-title">Sign In</h1>
+        <h1 class="form-title">Login</h1>
         <form method="post" action="">
             <div class="input-group">
                 <i class="fas fa-envelope"></i>
-                <input type="email" name="email" id="email" placeholder="Email"requierd>
+                <input type="email" name="email" id="email" placeholder="Email" required>
                 <div class="border"></div><hr>
                 <label for="email">Email</label>
             </div>
@@ -27,13 +27,42 @@
                 <a href="#">Recover Password</a>
             </p>
             <div class="links">
-            <a id="signInButton" class="btn" href="http://127.0.0.1:5500/public/index.html" role="button">Sign In</a>
+                <a id="signInButton" class="btn"role="button">Login</a>
             </div>
         </form>
-        <div class="links">
-            <p>Don't have an Account yet?</p>
-            <button id="signUpButton"><a rel="signUpButton" href="index(1).html">Sign Up</a></button>
+<div class="links">
+            <p>Already have an Account?</p>
+            <div class="links">
+            <button id="signUpButton"><a rel="signUpButton" href="index(1).html">Sign In</a></button>
         </div>
-    </div>
+
+        <p id="errorMsg" style="color:red;text-align:center;margin-top:8px;"></p>
+
+        <script>
+            const allowed = [
+                { email: 'Iustin@gmail.com', password: '1234'},
+,                { email: 'Radu@gmail.com', password: '1234'},
+                { email: 'Erwin@gmail.com', password: '1234'},
+            ];
+
+            const signInBtn = document.getElementById('signInButton');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const errorMsg = document.getElementById('errorMsg');
+
+            signInBtn.addEventListener('click', () => {
+                const email = (emailInput.value || '').trim().toLowerCase();
+                const password = (passwordInput.value || '').trim();
+
+                const ok = allowed.some(acc => acc.email.toLowerCase() === email && acc.password === password);
+                if (ok) {
+                    window.location.href = '../public/index.html';
+                } else {
+                    errorMsg.textContent = 'Invalid email or password.';
+                    passwordInput.value = '';
+                    window.location.href = 'http://127.0.0.1:5500/Login/index(2).html'
+                }
+            });
+        </script>
 </body>
 </html>

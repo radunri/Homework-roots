@@ -86,7 +86,6 @@ input:focus~label, input:not(:placeholder-shown)~label{
 .btn{
     font-size: 1.1rem;
     padding: 8px;
-    border-radius: 2px;
     outline: none;
     border: none;
     width: 100%;
@@ -100,11 +99,12 @@ input:focus~label, input:not(:placeholder-shown)~label{
     
 #signInButton a{
     text-decoration: none;
-    color: #000;
+    color: #000000;
+    text-align: absolute;
 }
 #signUpButton a{
     text-decoration: none;
-    color: #000;
+    color: #000000;
 }
 .btn:hover{
     background: transparent;
@@ -121,7 +121,7 @@ input:focus~label, input:not(:placeholder-shown)~label{
     padding: 0 4rem;
     margin-top: 0.9rem;
     font-weight: bold;
-    color: #000;
+    color: #000000;
 }
 button{
     color: #000;

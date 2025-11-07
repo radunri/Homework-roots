@@ -53,6 +53,8 @@
             .cal-day .date{font-weight:700;color:var(--dark-1)}
             .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
             .cal-day-selected{background-color:black;padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
+            .cal-day-selected .date{font-weight:700;color:var(--dark-1)}
+            .cal-day-selected .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
             .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
 
             /* OCR / Hints area */
@@ -100,8 +102,15 @@
             }
             .file-picker svg{width:28px;height:28px;margin-right:10px}
             .file-picker span{display:inline-block;text-align:center}
-            /* Make OCR button match file-picker width/style */
-            #runOcrBtn, #genHintsBtn, #copyHints{width:100%;padding:12px 16px;text-align:center}
+            /* Make OCR and picker buttons match: identical padding, margins and full width */
+            .file-picker, #runOcrBtn, #genHintsBtn, #copyHints{
+                display:flex;align-items:center;justify-content:center;
+                width:100%;padding:12px 16px;margin:0;text-align:center;border-radius:12px;
+                box-sizing:border-box;cursor:pointer;min-height:48px;gap:8px;line-height:1;
+            }
+            /* Keep thumbnail sized and not increasing container padding/height */
+            .file-picker img{width:32px;height:32px;flex:0 0 32px}
+            .file-picker span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;display:inline-block}
             /* hide native input while keeping it in DOM for JS access */
             .file-input-hidden{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
         </style>
@@ -165,12 +174,15 @@
       <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
       <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
     </svg>
-                                    <span style="font-weight:600;text-align:center;">Upload image</span>
+                                    <div style="display:flex;align-items:center;gap:8px">
+                                        <img id="imageThumb" src="" alt="" style="width:32px;height:32px;display:none;border-radius:6px;object-fit:cover;border:1px solid rgba(0,0,0,0.06)" />
+                                        <span id="imageName" style="font-weight:600;text-align:center;">Upload image</span>
+                                    </div>
                                 </label>
                                 <input id="imageInput" class="file-input-hidden" type="file" accept="image/*" />
-                                <button id="runOcrBtn" class="btn" style="width:100%;text-align:center;">Run OCR</button>
+                                <button id="runOcrBtn" class="btn">Run OCR</button>
                                 <!-- moved ICS file input here (was previously in the header) - custom picker -->
-                                <label class="file-picker" for="icsFile" title="Import .ics" style="margin-top:6px">
+                                <label class="file-picker" for="icsFile" title="Import .ics">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16" style="margin-right:10px;vertical-align:middle;">
       <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
       <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
@@ -178,8 +190,8 @@
                                     <span style="font-weight:600;text-align:center;">Import .ics</span>
                                 </label>
                                 <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />
-                                <div style="font-size:13px;color:var(--muted)">Or paste text into the box on the right.</div>
-                                <div style="margin-top:8px;font-size:12px;color:var(--muted)">Use remote AI hints (OpenAI) by running the provided local server and setting <code>OPENAI_API_KEY</code>.</div>
+                                <div style="font-size:13px;color:var(--muted)">.</div>
+                                <div style="margin-top:8px;font-size:12px;color:var(--muted)"></div>
                             </div>
                             <div style="flex:1;display:flex;flex-direction:column;gap:8px">
                                 <textarea id="ocrText" placeholder="OCR output or paste problem text here..."></textarea>
@@ -542,6 +554,30 @@
             const genHintsBtn = document.getElementById('genHintsBtn');
             const hintsArea = document.getElementById('hintsArea');
 
+            // show selected image filename and thumbnail inside the upload label
+            try{
+                const imageNameEl = document.getElementById('imageName');
+                const imageThumb = document.getElementById('imageThumb');
+                if(imageInput){
+                    imageInput.addEventListener('change', (e)=>{
+                        const f = e.target.files && e.target.files[0];
+                        if(!f){
+                            if(imageNameEl) imageNameEl.textContent = 'Upload image';
+                            if(imageThumb) { imageThumb.src=''; imageThumb.style.display='none'; }
+                            return;
+                        }
+                        if(imageNameEl) imageNameEl.textContent = f.name;
+                        if(imageThumb && f.type && f.type.startsWith('image/')){
+                            const url = URL.createObjectURL(f);
+                            imageThumb.src = url;
+                            imageThumb.style.display = 'block';
+                            // revoke after image loads
+                            imageThumb.onload = ()=>{ URL.revokeObjectURL(url); }
+                        } else if(imageThumb){ imageThumb.style.display='none'; }
+                    });
+                }
+            }catch(e){console.warn('image preview setup failed',e)}
+
             // Preprocess image: resize to max width and apply simple contrast/grayscale to improve OCR
             async function preprocessImage(dataUrl, maxWidth = 1600){
                 return new Promise((resolve, reject)=>{
@@ -819,4 +855,5 @@
             window.SH = {state,save:saveTasks,load:loadTasks};
         </script>
     </body>
+
 </html>

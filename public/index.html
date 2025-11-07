@@ -52,6 +52,7 @@
             .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
             .cal-day .date{font-weight:700;color:var(--dark-1)}
             .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+            .cal-day-selected{background-color:black;padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
             .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
 
             /* OCR / Hints area */
@@ -151,7 +152,7 @@
                                     <button id="genHintsBtn" class="btn">Generate Hints</button>
                                     <button id="copyHints" class="btn secondary">Copy Hints</button>
                                 </div>
-                                <div id="hintsArea" style="background-color:rgba(241,234,218,0.9);padding:12px;border-radius:8px;border:1px solid rgba(76,88,62,0.06);min-height:60px;color:var(--dark-1)"></div>
+                                <div id="hintsArea" style="background-color:rgba(241,234,218,0.9);padding:12px;border-radius:8px;border:1px solid rgba(76,88,62,0.06);min-height:200px;color:var(--dark-1)"></div>
                             </div>
                         </div>
                     </div>
@@ -182,7 +183,7 @@
         <script>
             // Basic SPA state
             const state = { tasks: [], selectedDate: new Date().toLocaleDateString('en-CA'), notifEnabled: false };
-
+            
             // Utilities
             function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
             function formatDate(d){return d}
@@ -255,20 +256,25 @@
                 calGrid.innerHTML='';
                 const start = startOfMonth(viewDate);
                 const end = endOfMonth(viewDate);
-                monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric'});
+                monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric', day:"numeric"});
                 const startWeekday = start.getDay();
                 const total = end.getDate();
 
                 // add blanks
                 for(let i=0;i<startWeekday;i++){const cell=document.createElement('div');cell.className='cal-day';cell.id="cal-day";cell.style.opacity=.4;calGrid.appendChild(cell);}
-
+                state.selectedDate=new Date().toISOString().slice(0,10)
                 for(let d=1;d<=total;d++){
                     const dt = new Date(viewDate.getFullYear(),viewDate.getMonth(),d);
                     const key = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
+
                     const cell=document.createElement('div');cell.className='cal-day';
                     cell.innerHTML = `<div class="date">${d}</div><div class="dots" data-date="${key}"></div>`;
-                    cell.addEventListener('click',()=>{state.selectedDate=key;renderTodoList();});
-
+                    cell.addEventListener('click',()=>{state.selectedDate=key;renderTodoList();document.querySelectorAll('.cal-day-selected').forEach(c => c.className="cal-day");;cell.className = "cal-day-selected"});
+                    if (key === state.selectedDate) {
+                    console.log(key)
+                    console.log(state.selectedDate)
+                    cell.className = 'cal-day-selected';
+                    }
                     // show small dots for tasks
                     const dots = cell.querySelector('.dots');
                     const tasks = state.tasks.filter(t=>t.date===key);
@@ -277,6 +283,8 @@
                     calGrid.appendChild(cell);
                 }
             }
+
+            
 
             // Todo list render
             const todoListEl = document.getElementById('todoList');
@@ -337,7 +345,7 @@
             // Calendar controls
             document.getElementById('prevMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1);renderCalendar()});
             document.getElementById('nextMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);renderCalendar()});
-            document.getElementById('todayBtn').addEventListener('click',()=>{viewDate=new Date();state.selectedDate=new Date().toISOString().slice(0,10);renderCalendar();renderTodoList()});
+            document.getElementById('todayBtn').addEventListener('click',()=>{viewDate=new Date();state.selectedDate=new Date().toISOString().slice(0,10);renderCalendar();renderTodoList();});
 
             // Notifications (checkbox removed from UI) — guard access
             const enableNotif = document.getElementById('enableNotif');
@@ -586,6 +594,7 @@
 
                     // Clear previous text
                     messageDiv.innerHTML = "";
+
 
                     // Render title and body
                     const titleEl = document.createElement("h2");

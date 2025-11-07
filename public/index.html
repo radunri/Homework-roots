@@ -27,7 +27,7 @@
                 --text: var(--light);
             }
             *{box-sizing:border-box}
-            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background-color:hsl(39, 28%, 73%);color:var(--text);min-height:100vh}
+            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background-color:#B59E7D;color:var(--text);min-height:100vh}
             header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px}
             .brand{display:flex;align-items:center;gap:12px}
             .logo{width:48px;height:48px;border-radius:12px;background:var(--warm-1);display:inline-flex;align-items:center;justify-content:center;color:var(--dark-1);font-weight:800}
@@ -89,6 +89,12 @@
             input[type="file"]::-webkit-file-upload-button, input[type="file"]::file-selector-button{
                 border-radius:15px; background-color:var(--green-2); color:var(--light); border:none; padding:8px 12px; cursor:pointer;
             }
+
+            /* Custom file picker label that shows an icon (replaces default "Choose file") */
+            .file-picker{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:var(--green-1);color:var(--light);cursor:pointer;border:1px solid rgba(0,0,0,0.06)}
+            .file-picker svg{width:28px;height:28px;flex:0 0 28px}
+            /* hide native input while keeping it in DOM for JS access */
+            .file-input-hidden{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
         </style>
     </head>
     <body>
@@ -144,10 +150,28 @@
                         <h2>OCR & Hints</h2>
                         <div class="ocr-area">
                             <div style="width:240px;display:flex;flex-direction:column;gap:8px">
-                                <input type="file" id="imageInput" accept="image/*" />
+                                <!-- custom file-picker for image input (native input kept hidden for JS) -->
+                                <label class="file-picker" for="imageInput" title="Upload image">
+                                    <!-- inline SVG icon (upload into box) -->
+                                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <rect x="8" y="40" width="48" height="12" rx="3" fill="#000000" />
+                                        <path d="M32 40 V14" stroke="#000000" stroke-width="6" stroke-linecap="round" fill="none" />
+                                        <path d="M20 26 L32 14 L44 26" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                    </svg>
+                                    <span style="font-weight:600">Upload image</span>
+                                </label>
+                                <input id="imageInput" class="file-input-hidden" type="file" accept="image/*" />
                                 <button id="runOcrBtn" class="btn">Run OCR</button>
-                                <!-- moved ICS file input here (was previously in the header) -->
-                                <input type="file" id="icsFile" accept=".ics" style="margin-top:6px" />
+                                <!-- moved ICS file input here (was previously in the header) - custom picker -->
+                                <label class="file-picker" for="icsFile" title="Import .ics" style="margin-top:6px">
+                                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <rect x="8" y="40" width="48" height="12" rx="3" fill="#000000" />
+                                        <path d="M32 40 V14" stroke="#000000" stroke-width="6" stroke-linecap="round" fill="none" />
+                                        <path d="M20 26 L32 14 L44 26" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                    </svg>
+                                    <span style="font-weight:600">Import .ics</span>
+                                </label>
+                                <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />
                                 <div style="font-size:13px;color:var(--muted)">Or paste text into the box on the right.</div>
                                 <div style="margin-top:8px;font-size:12px;color:var(--muted)">Use remote AI hints (OpenAI) by running the provided local server and setting <code>OPENAI_API_KEY</code>.</div>
                             </div>

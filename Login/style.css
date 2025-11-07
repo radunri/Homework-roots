@@ -1,0 +1,77 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "poppins",sans-serif;
+}
+body{
+    background-color: #2C231C;
+}
+.container{
+    background: #CEC1AB;
+    width: 450px;
+    padding: 1.5rem;
+    margin: 50px auto;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba( 0, 0, 1, 0.9);
+}
+form{
+    margin:0 2rem;
+
+}
+.form-title{
+    font-size: 1.5rem;
+    color: #F1EADA;
+    font-weight: bold;
+    text-align: center;
+    padding: 1.3rem;
+    margin-bottom: 0.4rem;
+}
+input{
+    color: inherit;
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px soid #757575;
+    padding-left: 1.5rem;
+    font-size: 15px;
+}
+.input-group{
+    padding: 1% 0;
+    position: relative;
+}
+.input-group i{
+    position: absolute;
+    color: black;
+}
+input:focus{
+    background-color: transparent;
+    outline: transparent;
+    border-bottom: 2px solid hsl(327, 90%, 28%);
+}
+input::placeholder{
+    color: transparent;
+}
+.border {
+    color: black;
+    height: 1px;
+    display: block;
+}
+label{
+    color: #757575;
+    position: relative;
+    left: 1.2em;
+    top: -1.3em;
+    cursor: auto;
+    transition: 0.3s ease all;
+}
+
+
+#signInButton a{
+    text-decoration: none;
+    color: #000;
+}
+#signUpButton a{
+    text-decoration: none;
+    color: #000;
+}

@@ -93,6 +93,8 @@
     </head>
     <body>
         <header>
+            <input type="file" id="icsFile" accept=".ics" />
+
             <div class="brand">
                 <div class="logo">SH</div>
                 <div>
@@ -218,7 +220,7 @@
                     try{ localStorage.setItem('sh_viewDate', viewDate.getFullYear() + '-' + pad(viewDate.getMonth()+1)); }catch(e){}
                     localStorage.setItem('sh_notif', state.notifEnabled ? 'true' : 'false');
                     try{localStorage.setItem('sh_ocrText', document.getElementById('ocrText').value || '');}catch(e){}
-                    try{localStorage.setItem('sh_hints', document.getElementById('hintsArea').innerText || '');}catch(e){}
+                    //try{localStorage.setItem('sh_hints', document.getElementById('hintsArea').innerText || '');}catch(e){}
                 }catch(e){console.warn('saveState failed', e)}
             }
 
@@ -237,7 +239,7 @@
                     }
                     const o = localStorage.getItem('sh_ocrText');
                     if(o) try{document.getElementById('ocrText').value = o;}catch(e){}
-                    const h = localStorage.getItem('sh_hints');
+                    //const h = localStorage.getItem('sh_hints');
                     if(h) try{document.getElementById('hintsArea').innerText = h;}catch(e){}
                     const n = localStorage.getItem('sh_notif');
                     state.notifEnabled = n === 'true';
@@ -282,7 +284,58 @@
 
                     calGrid.appendChild(cell);
                 }
+                    document.getElementById('icsFile').addEventListener('click', ()=>{
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const icsText = e.target.result;
+                        const events = parseICS(icsText); 
+                        console.log(events); // vezi ce s-a extras
+                        events.forEach((item,index)=>{
+                            title = item["title"]
+                            date = item["date"]
+                            description = item["description"]
+
+                            
+                            console.log(title,date,description)
+                            saveTask(title,date,description)
+
+
+                        })
+                    };
+                    reader.readAsText(file);
+                    });
+
+                    function parseICS(icsData) {
+                    const events = [];
+                    const lines = icsData.split(/\r?\n/);
+                    let current = {};
+
+                    for (let line of lines) {
+                        if (line.startsWith('BEGIN:VEVENT')) current = {};
+                        else if (line.startsWith('END:VEVENT')) events.push(current);
+                        else if (line.startsWith('SUMMARY:')) current.title = line.slice(8);
+                        else if (line.startsWith('DESCRIPTION:')) current.description = line.slice(12);
+                        else if (line.startsWith('DTSTART')) {
+                        current.date = parseICSDate(line);
+                        }
+                    }
+                    return events;
+                }
+
+                function parseICSDate(line) {
+                const [, value] = line.split(':');
+                const dt = value.replace('T', '').replace('Z', '');
+                const year = dt.slice(0, 4);
+                const month = dt.slice(4, 6);
+                const day = dt.slice(6, 8);
+                return `${year}-${month}-${day}`;
+                }
+                
             }
+            
 
             
 
@@ -321,18 +374,36 @@
             }
             function closeModal(){modal.style.display='none'}
 
-            document.getElementById('saveTask').addEventListener('click',()=>{
-                const rawDate = taskDate.value || state.selectedDate || '';
+            function saveTask(titleArg, dateArg, descArg) {
+                const title = titleArg || taskTitle.value.trim();
+                const rawDate = dateArg || taskDate.value || state.selectedDate || '';
                 const isoDate = normalizeDateInput(rawDate) || state.selectedDate || todayISOLocal();
-                const t = {title:taskTitle.value.trim(),date:isoDate,time:taskTime.value,desc:taskDesc.value};
-                if(!t.title) return alert('Please give the task a title');
-                if(editingId){
-                    const idx = state.tasks.findIndex(x=>x.id===editingId);
-                    if(idx>=0){state.tasks[idx]=Object.assign({},state.tasks[idx],t);}
-                } else { state.tasks.push(Object.assign({id:uid(),notified:false},t)); }
-                saveTasks();renderCalendar();renderTodoList();closeModal();
-            });
+                const desc = descArg || taskDesc.value;
 
+                const t = { title, date: isoDate, time: taskTime.value, desc };
+
+                if (!t.title) return alert('Please give the task a title');
+
+                const exists = state.tasks.some(t => t.title === title && t.date === isoDate);
+                if (exists) {
+                    console.warn(`Duplicate task skipped: ${title} on ${isoDate}`);
+                    return;
+                }
+
+                if (editingId) {
+                    const idx = state.tasks.findIndex(x => x.id === editingId);
+                    if (idx >= 0) state.tasks[idx] = Object.assign({}, state.tasks[idx], t);
+                } else {
+                    state.tasks.push(Object.assign({ id: uid(), notified: false }, t));
+                }
+
+                saveTasks();
+                renderCalendar();
+                renderTodoList();
+                closeModal();
+            }
+
+            document.getElementById('saveTask').addEventListener('click', () => saveTask());
             // Edit/Delete handlers (delegation)
             todoListEl.addEventListener('click',e=>{
                 if(e.target.matches('button.edit')){

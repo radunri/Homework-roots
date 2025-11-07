@@ -47,7 +47,7 @@ input{
 input:focus{
     background-color: transparent;
     outline: transparent;
-    border-bottom: 2px solid hsl(327, 90%, 28%);
+    border-bottom: 2px solid #000;
 }
 input::placeholder{
     color: transparent;
@@ -65,8 +65,34 @@ label{
     cursor: auto;
     transition: 0.3s ease all;
 }
-
-
+input:focus~label, input:not(:placeholder-shown)~label{
+    top: -3em;
+    color: #000;
+    font-size: 15pxl;
+}
+.recover{
+    text-align: right;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+.recover a{
+    text-decoration: none;
+    color: rgb(125, 125, 235);
+}
+.recover a:hover{
+    color: blue;
+    text-decoration: underline;
+}
+.btn{
+    font-size: 1.1rem;
+    padding: 8px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    width: 100%;
+    background: #6b4236;
+}
+    
 #signInButton a{
     text-decoration: none;
     color: #000;
@@ -74,4 +100,32 @@ label{
 #signUpButton a{
     text-decoration: none;
     color: #000;
+}
+.btn:hover{
+    background: transparent;
+    border: 2px solid #000;
+}
+.or{
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+.links{
+    display: flex;
+    justify-content: space-around;
+    padding: 0 4rem;
+    margin-top: 0.9rem;
+    font-weight: bold;
+}
+button{
+    color: #000;
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: bold;
+}
+button:hover{
+    text-decoration: underline;
+    color: transparent;
+
 }

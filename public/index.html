@@ -161,24 +161,21 @@
                             <div style="width:320px;display:flex;flex-direction:column;gap:8px">
                                 <!-- custom file-picker for image input (native input kept hidden for JS) -->
                                 <label class="file-picker" for="imageInput" title="Upload image">
-                                    <!-- inline SVG icon (upload into box) -->
-                                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                        <rect x="8" y="40" width="48" height="12" rx="3" fill="#000000" />
-                                        <path d="M32 40 V14" stroke="#000000" stroke-width="6" stroke-linecap="round" fill="none" />
-                                        <path d="M20 26 L32 14 L44 26" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                                    </svg>
-                                    <span style="font-weight:600">Upload image</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16" style="margin-right:10px;vertical-align:middle;">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+      <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+    </svg>
+                                    <span style="font-weight:600;text-align:center;">Upload image</span>
                                 </label>
                                 <input id="imageInput" class="file-input-hidden" type="file" accept="image/*" />
-                                <button id="runOcrBtn" class="btn">Run OCR</button>
+                                <button id="runOcrBtn" class="btn" style="width:100%;text-align:center;">Run OCR</button>
                                 <!-- moved ICS file input here (was previously in the header) - custom picker -->
                                 <label class="file-picker" for="icsFile" title="Import .ics" style="margin-top:6px">
-                                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                                        <rect x="8" y="40" width="48" height="12" rx="3" fill="#000000" />
-                                        <path d="M32 40 V14" stroke="#000000" stroke-width="6" stroke-linecap="round" fill="none" />
-                                        <path d="M20 26 L32 14 L44 26" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-                                    </svg>
-                                    <span style="font-weight:600">Import .ics</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16" style="margin-right:10px;vertical-align:middle;">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+      <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+    </svg>
+                                    <span style="font-weight:600;text-align:center;">Import .ics</span>
                                 </label>
                                 <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />
                                 <div style="font-size:13px;color:var(--muted)">Or paste text into the box on the right.</div>

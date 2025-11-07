@@ -27,7 +27,7 @@
                 --text: var(--light);
             }
             *{box-sizing:border-box}
-            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background-color:hsl(39, 28%, 73%);color:var(--text);min-height:100vh}
+            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background-color:#B59E7D;color:var(--text);min-height:100vh}
             header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px}
             .brand{display:flex;align-items:center;gap:12px}
             .logo{width:48px;height:48px;border-radius:12px;background:var(--warm-1);display:inline-flex;align-items:center;justify-content:center;color:var(--dark-1);font-weight:800}
@@ -89,14 +89,18 @@
             input[type="file"]::-webkit-file-upload-button, input[type="file"]::file-selector-button{
                 border-radius:15px; background-color:var(--green-2); color:var(--light); border:none; padding:8px 12px; cursor:pointer;
             }
+
+            /* Custom file picker label that shows an icon (replaces default "Choose file") */
+            .file-picker{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:var(--green-1);color:var(--light);cursor:pointer;border:1px solid rgba(0,0,0,0.06)}
+            .file-picker svg{width:28px;height:28px;flex:0 0 28px}
+            /* hide native input while keeping it in DOM for JS access */
+            .file-input-hidden{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
         </style>
     </head>
     <body>
         <header>
-            <input type="file" id="icsFile" accept=".ics" />
-
             <div class="brand">
-                <div class="logo">SH</div>
+                <div class="logo"><img src="logo.jpg" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/></div>
                 <div>
                     <div style="font-weight:700">Homework Roots</div>
                     <div style="font-size:13px;color:var(--muted)">Organize tasks, calendar, OCR hints — beginner friendly</div>
@@ -136,6 +140,9 @@
                             </div>
                         </div>
 
+                        <!-- visible selected date header that updates when a day is picked -->
+                       
+
                         <div class="cal-grid" id="calGrid"></div>
                     </div>
 
@@ -143,8 +150,28 @@
                         <h2>OCR & Hints</h2>
                         <div class="ocr-area">
                             <div style="width:240px;display:flex;flex-direction:column;gap:8px">
-                                <input type="file" id="imageInput" accept="image/*" />
+                                <!-- custom file-picker for image input (native input kept hidden for JS) -->
+                                <label class="file-picker" for="imageInput" title="Upload image">
+                                    <!-- inline SVG icon (upload into box) -->
+                                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <rect x="8" y="40" width="48" height="12" rx="3" fill="#000000" />
+                                        <path d="M32 40 V14" stroke="#000000" stroke-width="6" stroke-linecap="round" fill="none" />
+                                        <path d="M20 26 L32 14 L44 26" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                    </svg>
+                                    <span style="font-weight:600">Upload image</span>
+                                </label>
+                                <input id="imageInput" class="file-input-hidden" type="file" accept="image/*" />
                                 <button id="runOcrBtn" class="btn">Run OCR</button>
+                                <!-- moved ICS file input here (was previously in the header) - custom picker -->
+                                <label class="file-picker" for="icsFile" title="Import .ics" style="margin-top:6px">
+                                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                        <rect x="8" y="40" width="48" height="12" rx="3" fill="#000000" />
+                                        <path d="M32 40 V14" stroke="#000000" stroke-width="6" stroke-linecap="round" fill="none" />
+                                        <path d="M20 26 L32 14 L44 26" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                                    </svg>
+                                    <span style="font-weight:600">Import .ics</span>
+                                </label>
+                                <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />
                                 <div style="font-size:13px;color:var(--muted)">Or paste text into the box on the right.</div>
                                 <div style="margin-top:8px;font-size:12px;color:var(--muted)">Use remote AI hints (OpenAI) by running the provided local server and setting <code>OPENAI_API_KEY</code>.</div>
                             </div>
@@ -249,7 +276,32 @@
             // Calendar render
             const calGrid = document.getElementById('calGrid');
             const monthLabel = document.getElementById('monthLabel');
+            const selectedDateHeader = document.getElementById('selected-date');
             let viewDate = new Date();
+
+            // Update the visible selected-date header from state.selectedDate
+            function updateSelectedDateHeader(){
+                try{
+                    if(!selectedDateHeader) return;
+                    const sd = state.selectedDate || new Date().toISOString().slice(0,10);
+                    const parts = sd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                    if(parts){
+                        const y = parseInt(parts[1],10), mo = parseInt(parts[2],10)-1, d = parseInt(parts[3],10);
+                        const dt = new Date(y, mo, d);
+                        selectedDateHeader.innerText = dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                    } else {
+                        selectedDateHeader.innerText = sd;
+                    }
+                }catch(e){console.warn('updateSelectedDateHeader failed', e)}
+            }
+
+            // Set the selected date (ISO yyyy-mm-dd), update header and re-render
+            function setSelectedDate(isoYMD){
+                state.selectedDate = isoYMD;
+                try{ updateSelectedDateHeader(); }catch(e){}
+                try{ renderCalendar(); }catch(e){}
+                try{ renderTodoList(); }catch(e){}
+            }
 
             function startOfMonth(d){return new Date(d.getFullYear(),d.getMonth(),1)}
             function endOfMonth(d){return new Date(d.getFullYear(),d.getMonth()+1,0)}
@@ -258,24 +310,34 @@
                 calGrid.innerHTML='';
                 const start = startOfMonth(viewDate);
                 const end = endOfMonth(viewDate);
-                monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric', day:"numeric"});
+                // Show the currently selected date in the month label (instead of the default month start like "November 1")
+                try{
+                    const sd = state.selectedDate || new Date().toISOString().slice(0,10);
+                    const parts = sd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                    if(parts){
+                        const y = parseInt(parts[1],10), mo = parseInt(parts[2],10)-1, d = parseInt(parts[3],10);
+                        const dt = new Date(y, mo, d);
+                        monthLabel.textContent = dt.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+                    } else {
+                        monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric'});
+                    }
+                }catch(e){ monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric'}); }
                 const startWeekday = start.getDay();
                 const total = end.getDate();
 
                 // add blanks
                 for(let i=0;i<startWeekday;i++){const cell=document.createElement('div');cell.className='cal-day';cell.id="cal-day";cell.style.opacity=.4;calGrid.appendChild(cell);}
-                state.selectedDate=new Date().toISOString().slice(0,10)
+                // don't overwrite an existing selection; if none, default to today
+                if(!state.selectedDate) state.selectedDate = new Date().toISOString().slice(0,10);
                 for(let d=1;d<=total;d++){
                     const dt = new Date(viewDate.getFullYear(),viewDate.getMonth(),d);
                     const key = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
 
                     const cell=document.createElement('div');cell.className='cal-day';
                     cell.innerHTML = `<div class="date">${d}</div><div class="dots" data-date="${key}"></div>`;
-                    cell.addEventListener('click',()=>{state.selectedDate=key;renderTodoList();document.querySelectorAll('.cal-day-selected').forEach(c => c.className="cal-day");;cell.className = "cal-day-selected"});
+                    cell.addEventListener('click',()=>{ setSelectedDate(key); });
                     if (key === state.selectedDate) {
-                    console.log(key)
-                    console.log(state.selectedDate)
-                    cell.className = 'cal-day-selected';
+                        cell.className = 'cal-day-selected';
                     }
                     // show small dots for tasks
                     const dots = cell.querySelector('.dots');
@@ -284,26 +346,23 @@
 
                     calGrid.appendChild(cell);
                 }
-                    document.getElementById('icsFile').addEventListener('click', ()=>{
-                    const file = event.target.files[0];
+                    // Handle ICS file selection (use 'change' so it fires when a file is picked)
+                    document.getElementById('icsFile').addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
                     if (!file) return;
 
                     const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const icsText = e.target.result;
-                        const events = parseICS(icsText); 
-                        console.log(events); // vezi ce s-a extras
-                        events.forEach((item,index)=>{
-                            title = item["title"]
-                            date = item["date"]
-                            description = item["description"]
-
-                            
-                            console.log(title,date,description)
-                            saveTask(title,date,description)
-
-
-                        })
+                    reader.onload = function (evt) {
+                        const icsText = evt.target.result;
+                        const events = parseICS(icsText);
+                        console.log(events); // see extracted events
+                        events.forEach((item) => {
+                            const title = item["title"] || 'Untitled';
+                            const date = item["date"] || '';
+                            const description = item["description"] || '';
+                            console.log(title, date, description);
+                            try{ saveTask(title, date, description); }catch(err){ console.warn('saveTask failed', err); }
+                        });
                     };
                     reader.readAsText(file);
                     });
@@ -737,6 +796,8 @@
             loadTasks();
             loadState();
             if(enableNotif) enableNotif.checked = state.notifEnabled;
+            // ensure the selected-date header shows the current selection on load
+            try{ updateSelectedDateHeader(); }catch(e){}
             renderCalendar();
             renderTodoList();
 

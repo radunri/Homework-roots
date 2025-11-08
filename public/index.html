@@ -52,12 +52,39 @@
             .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06);position:relative}
             .cal-day .date{font-weight:700;color:var(--dark-1)}
             .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
-            .cal-day-selected{background-color:black;padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
-            .cal-day-selected .date{font-weight:700;color:var(--dark-1)}
+            .cal-day-selected{background-color:#654839;padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
+            .cal-day-selected .date{font-weight:700;color:white}
             .cal-day-selected .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
             .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
             /* per-day small add button */
-            .day-add-btn{position:absolute;right:8px;top:8px;display:none;padding:4px 6px;font-size:12px;border-radius:4px;cursor:pointer;background:transparent;border:none;color:#000;font-weight:700}
+            .day-add-btn{
+                position:absolute;
+                right:4px;
+                top:4px;
+                padding:4px 8px;
+                font-size:12px;
+                border-radius:4px;
+                cursor:pointer;
+                background:none;
+                border:1px solid rgba(0,0,0,0.1);
+                color:black;
+                font-weight:600;
+                white-space:nowrap;
+                z-index:10;
+                display:none;
+                transition: opacity 0.2s ease;
+                opacity: 0;
+            }
+            .cal-day:hover .day-add-btn{
+                display:block;
+                opacity: 1;
+            }
+            .cal-day-selected .day-add-btn{
+                display:block;
+                opacity: 1;
+                background:white;
+                color:black;
+            }
 
             /* OCR / Hints area */
             /* make columns stretch to the same height so the side image can fill its column */
@@ -374,15 +401,13 @@
                     const addBtn = document.createElement('button');
                     addBtn.className = 'day-add-btn';
                     addBtn.type = 'button';
-                    addBtn.textContent = 'Add task';
-                    addBtn.addEventListener('click', (e) => { e.stopPropagation(); setSelectedDate(key); openModal(); });
-                    // show the add button only on right-click (contextmenu)
-                    cell.addEventListener('contextmenu', (e) => {
+                    addBtn.textContent = '+';
+                    addBtn.addEventListener('click', (e) => { 
                         e.preventDefault();
-                        hideAllAddBtns();
-                        // show the add button at the top-right corner of the cell
-                        try{ setSelectedDate(key); }catch(err){}
-                        addBtn.style.display = 'block';
+                        e.stopPropagation(); 
+                        setSelectedDate(key); 
+                        openModal(); 
+                        try{ taskTitle.focus(); }catch(err){} 
                     });
                     cell.appendChild(addBtn);
                     // show small dots for tasks

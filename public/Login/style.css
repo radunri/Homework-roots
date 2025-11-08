@@ -8,7 +8,7 @@ body{
     background-color: #d3b985;
 }
 .container{
-    background: #B08563;
+    background: #b59e7d;
     width: 450px;
     padding: 1.5rem;
     margin: 50px auto;
@@ -138,14 +138,6 @@ button:hover{
   bottom: 10px;   /* distance from bottom edge */
   left: 10px;     /* distance from left edge */
   width: 120px;   /* adjust size as needed */
-  height: auto;
-  z-index: 1000;  /* ensures it stays on top of other elements */
-}
-.Tree-3 {
-  position: fixed;
-  bottom: 10px;   /* distance from bottom edge */
-  right: 30px;     /* distance from right edge */
-  width: 240px;   /* adjust size as needed */
   height: auto;
   z-index: 1000;  /* ensures it stays on top of other elements */
 }

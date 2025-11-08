@@ -56,7 +56,7 @@
 
                 const ok = allowed.some(acc => acc.email.toLowerCase() === email && acc.password === password);
                 if (ok) {
-                    window.location.href = '../public/index.html';
+                    window.location.href = '../index.html';
                 } else {
                     errorMsg.textContent = 'Invalid email or password.';
                     passwordInput.value = '';

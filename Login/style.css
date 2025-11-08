@@ -17,7 +17,6 @@ body{
 }
 form{
     margin:0 2rem;
-
 }
 .form-title{
     font-size: 1.5rem;
@@ -77,10 +76,10 @@ input:focus~label, input:not(:placeholder-shown)~label{
 }
 .recover a{
     text-decoration: none;
-    color: rgb(125, 125, 235);
+    color: #6b4236;
 }
 .recover a:hover{
-    color: blue;
+    color: #6b4236;
     text-decoration: underline;
 }
 .btn{
@@ -100,7 +99,7 @@ input:focus~label, input:not(:placeholder-shown)~label{
 #signInButton a{
     text-decoration: none;
     color: #000000;
-    text-align: absolute;
+    text-align: center;
 }
 #signUpButton a{
     text-decoration: none;
@@ -133,5 +132,20 @@ button{
 button:hover{
     text-decoration: underline;
     color: transparent;
-
+}
+.bottom-left-logo {
+  position: fixed;
+  bottom: 10px;   /* distance from bottom edge */
+  left: 10px;     /* distance from left edge */
+  width: 120px;   /* adjust size as needed */
+  height: auto;
+  z-index: 1000;  /* ensures it stays on top of other elements */
+}
+.Tree-3 {
+  position: fixed;
+  bottom: 10px;   /* distance from bottom edge */
+  right: 30px;     /* distance from right edge */
+  width: 240px;   /* adjust size as needed */
+  height: auto;
+  z-index: 1000;  /* ensures it stays on top of other elements */
 }

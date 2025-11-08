@@ -52,8 +52,6 @@
         <script>
             const allowed = [
                 { email: 'Iustin@gmail.com', password: '1234', fName: 'Iustin' , lName: 'Bercu' },
-                { email: 'Radu@gmail.com', password: '1234', fName: 'Radu' , lName: 'Nica' },
-                { email: 'Erwin@gmail.com', password: '1234', fName: 'Erwin' , lName: 'Wigh' }
             ];
 
             const signInBtn = document.getElementById('signInButton');
@@ -76,13 +74,17 @@
                     acc.lName.toLowerCase() === lName
                 );
             if (ok) {
-                window.location.href = '../public/index.html';
-            } else {
                 errorMsg.textContent = 'Invalid email or password.';
                 passwordInput.value = '';
                 window.location.href = 'http://127.0.0.1:5500/Login/index(1).html'
+            } else {
+                window.location.href = '../public/index.html';
                 }
             });
         </script>
+</body>
+<body>
+    <img src="../public/logo.jpg" alt="Homework Roots Logo" class="bottom-left-logo">
+    <img src="../Login/tree 3.png.jpg" alt="tree-3" class="Tree-3">
 </body>
 </html>

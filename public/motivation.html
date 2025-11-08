@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Motivational Quotes | Homework Roots</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* 🎨 Define color variables (you can change IDs easily) */
+    :root {
+      --color-bg: #CEC1A8;
+      --color-text: #2c231c;
+      --color-accent: #4c583e;
+      --color-button: #768064;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: system-ui, sans-serif;
+    }
+
+    .accent-bg {
+      background-color: var(--color-accent);
+    }
+
+    .btn {
+      background-color: var(--color-button);
+      color: white;
+      border-radius: 9999px;
+      padding: 0.75rem 1.5rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      opacity: 0.85;
+      transform: scale(1.05);
+    }
+
+    img {
+      border-radius: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      max-height: 80vh;
+      object-fit: contain;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col items-center justify-center min-h-screen p-8 space-y-8">
+  <header class="text-center">
+    <h1 class="text-3xl font-bold">Motivational Quotes</h1>
+    <p class="opacity-80 mt-2">Click the arrow to see the next quote 🌱</p>
+  </header>
+
+  <main class="flex flex-col items-center space-y-6">
+    <!-- Image display -->
+    <img id="quoteImage" src="/pics/pic1.jpeg" alt="Motivational Quote" class="max-w-full">
+
+    <!-- Navigation button -->
+    <button id="nextBtn" class="btn">Next </button>
+  </main>
+
+  <script>
+    /* 🖼️ Image switching logic */
+    const photos = [
+      "/pics/pic1.jpeg",
+      "/pics/pic2.jpeg",
+      "/pics/pic3.jpeg",
+      "/pics/pic4.jpeg",
+      "/pics/pic5.jpeg",
+      "/pics/pic6.jpeg",
+      "/pics/pic7.jpeg",
+      "/pics/pic8.jpeg",
+      "/pics/pic9.jpeg"
+    ];
+
+    let index = 0;
+    const img = document.getElementById("quoteImage");
+    const nextBtn = document.getElementById("nextBtn");
+
+    nextBtn.addEventListener("click", () => {
+      index = (index + 1) % photos.length;
+      img.src = photos[index];
+    });
+  </script>
+</body>
+</html>

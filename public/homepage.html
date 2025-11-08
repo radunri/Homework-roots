@@ -3,277 +3,139 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home | HOMEWORK ROOTS</title>
+  <title>Homework Roots | Home</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    /* --- General Reset & Body --- */
+    * {
       margin: 0;
-      background-color: #f1eada;
-      color: #2c231c;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
     }
 
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #f1eada 0%, #f1eada 100%);
+      color: #333;
+    }
+
+    /* --- Header --- */
     header {
-      background: #2c231c;
-      color: #f1eada;
-      padding: 20px;
       text-align: center;
+      padding: 2rem 1rem;
+      background-color: #2c231c;
+      color: #f1eada;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
     }
 
     nav a {
-      color: #f1eada;
-      margin: 0 10px;
       text-decoration: none;
-      font-weight: bold;
+      color: #f1eada;
+      font-weight: 600;
+      transition: color 0.3s;
     }
 
+    nav a:hover {
+      color: #cec1a8;
+    }
+
+    /* --- Main Section --- */
     main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 40px;
+      padding: 3rem 1rem;
     }
 
-    #motto-container {
-      background: #b59e7d;
-      color: #f1eada;
+    section {
+      max-width: 700px;
+      background: #cec1a8;
+      border-radius: 20px;
+      padding: 2rem 3rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* --- Motto Section --- */
+    #motto {
       font-size: 1.5rem;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      margin: 40px auto;
-      width: 80%;
-      max-width: 600px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      transition: opacity 0.6s ease;
+      color: #2c231c;
+      font-weight: 600;
+      transition: opacity 0.8s ease;
     }
 
- 
-
-    button:hover {
-      background-color: #a0522d;
-    }
-
+    /* --- Footer --- */
     footer {
-      text-align: center;
-      padding: 10px;
       background-color: #2c231c;
-      color: #f1eada;
+      text-align: center;
+      padding: 1rem;
+      color: #fff;
       font-size: 0.9rem;
-      position:fixed;
-      bottom: 0;
-      width: 100%;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>WELCOME TO HOMEWORK ROOTS</h1>
+    <h1>Welcome to Homework Roots!</h1>
     <nav>
-      <a href="<!doctype html>
-<html lang="ro">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>About Us | Homework Roots</title>
-  <meta name="description" content="Pagina 'About Us' — află cine suntem, misiunea noastră și echipa." />
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    .text-dark { color: #2c231c; }     /* Deep brown */
-    .text-light { color: #f1eada; }    /* Beige */
-
-    /* Backgrounds */
-    .bg-page { background-color: #211906; }   /* Very dark brown */
-    .bg-card { background-color: #dad1bd; }   /* Light tan */
-    .bg-avatar { background-color: #f1eada; } /* Beige */
-    .bg-section { background-color: #f1eada; }/* Beige sections */
-
-    /* Accents / Gradients */
-    .bg-accent {
-      background: linear-gradient(90deg, #4c583e, #768064); /* Olive → Sage */
-    }
-
-    /* Borders + Shadows */
-    .border-custom { border-color: #cec1a8; }
-    .shadow-custom { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); }
-
-    /* Global defaults */
-    body {
-      background-color: #211906; /* bg-page */
-      color: #2c231c; /* text-dark */
-      font-family: system-ui, sans-serif;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .redirect{
-        margin-top: 10px;
-        margin-bottom: -40px;
-    }
-    .redirect a{
-        padding: 5px;
-        font-size: 20px;
-        background-color: #2c231c;
-        border-radius: 5px;
-        text-decoration: none;
-    }
-  </style>
-</head>
-
-<body class="bg-page text-light">
-  <!-- Header -->
-  <header class="bg-accent text-light p-6 md:p-12">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <a href="#" class="text-2xl font-bold text-light" style="margin-left: -850px;">Homework Roots</a>
-      <div class="hidden md:flex gap-6 items-center" style="margin-left: 150px;">
-        <a href="#about" class="text-light hover:underline" >Despre</a>
-        <a href="#team" class="text-light hover:underline">Echipă</a>
-        <a href="#contact" class="text-light hover:underline">Contact</a>
-      </div>
-    </div>
-    <div class="max-w-4xl mx-auto mt-8 text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold">About Us</h1>
-      <p class="mt-4 text-lg opacity-90">
-        A team of friends with the same base: <br> we want to make the world a better place!
-      </p>
-      <div class="redirect">
-        <a href="/login/sign_up.html">Login</a>
-        <a href="/index.html">Calendar and AI</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main -->
-  <main class="max-w-6xl mx-auto p-6 md:p-12 space-y-16 text-dark">
-    <!-- About / Mission -->
-    <section id="about" class="bg-section rounded-2xl shadow-custom p-8 md:p-12">
-      <h2 class="text-2xl font-bold mb-4">Despre Homework Roots</h2>
-      <p class="leading-relaxed">
-        Homework Roots is a web application for pupils, students, and others, which helps them organize their homework and projects and manage their time better. The platform includes an AI assistant that offers guidance, not solutions, to support learning as effectively as possible. In addition, the unique design and motivational quotes encourage students to achieve their goals.
-      </p>
-
-      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="p-4 border border-custom rounded-lg bg-card">
-          <h3 class="font-semibold">About time management</h3>
-          <p class="text-sm mt-2">Our goal is to help users complete their tasks faster and more efficiently by providing a calendar, AI, and many ways to motivate them to work.</p>
-        </div>
-
-        <div class="p-4 border border-custom rounded-lg bg-card">
-          <h3 class="font-semibold">About AI</h3>
-          <p class="text-sm mt-2">We want to implement Artificial Intelligence in as many schools as possible.</p>
-        </div>
-
-        <div class="p-4 border border-custom rounded-lg bg-card">
-          <h3 class="font-semibold">Motivation</h3>
-          <p class="text-sm mt-2">We offer motivation services such as a tree that grows with every task and motivational quotes.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Team -->
-    <section id="team">
-      <h2 class="text-2xl font-bold mb-6 text-light">Our Team</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Member: Erwin Vigh -->
-        <article class="bg-card rounded-2xl shadow-custom p-6 text-center">
-          <div class="h-24 w-24 mx-auto rounded-full bg-avatar flex items-center justify-center text-2xl font-bold">EV</div>
-          <h3 class="mt-4 font-semibold">Erwin Vigh</h3>
-          <p class="text-sm opacity-80">Head of Programming</p>
-          <p class="mt-3 text-sm leading-relaxed">Pasiune pentru produs și strategie; coordonează viziunea companiei.</p>
-        </article>
-
-        <!-- Member: Sara Scorvelciu -->
-        <article class="bg-card rounded-2xl shadow-custom p-6 text-center">
-          <div class="h-24 w-24 mx-auto rounded-full bg-avatar flex items-center justify-center text-2xl font-bold">SS</div>
-          <h3 class="mt-4 font-semibold">Sara Scorvelciu</h3>
-          <p class="text-sm opacity-80">Head of Marketing</p>
-          <p class="mt-3 text-sm leading-relaxed">Construiește arhitectura tehnică și se ocupă de livrări de produs.</p>
-        </article>
-
-        <!-- Member: Clara Comaniciu -->
-        <article class="bg-card rounded-2xl shadow-custom p-6 text-center">
-          <div class="h-24 w-24 mx-auto rounded-full bg-avatar flex items-center justify-center text-2xl font-bold">CC</div>
-          <h3 class="mt-4 font-semibold">Clara Comaniciu</h3>
-          <p class="text-sm opacity-80">Head of Design</p>
-          <p class="mt-3 text-sm leading-relaxed">Design centrat pe om, prototipare rapidă și grafică memorabilă.</p>
-        </article>
-
-        <!-- Member: Radu Nica -->
-        <article class="bg-card rounded-2xl shadow-custom p-6 text-center">
-          <div class="h-24 w-24 mx-auto rounded-full bg-avatar flex items-center justify-center text-2xl font-bold">RN</div>
-          <h3 class="mt-4 font-semibold">Radu Nica</h3>
-          <p class="text-sm opacity-80">CEO</p>
-          <p class="mt-3 text-sm leading-relaxed">Design centrat pe om, prototipare rapidă și grafică memorabilă.</p>
-        </article>
-
-        <!-- Member: Iustin Bercu -->
-        <article class="bg-card rounded-2xl shadow-custom p-6 text-center">
-          <div class="h-24 w-24 mx-auto rounded-full bg-avatar flex items-center justify-center text-2xl font-bold">IB</div>
-          <h3 class="mt-4 font-semibold">Iustin Bercu</h3>
-          <p class="text-sm opacity-80">Director of Software</p>
-          <p class="mt-3 text-sm leading-relaxed">Design centrat pe om, prototipare rapidă și grafică memorabilă.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="bg-section rounded-2xl shadow-custom p-8 md:p-12 flex flex-col md:flex-row items-start gap-8">
-      <div class="flex-1">
-        <h2 class="text-2xl font-bold text-dark">Contact Us</h2>
-        <p class="mt-3 leading-relaxed text-dark">Any questions? Send us an e-mail and we will answer shortly.</p>
-        <ul class="mt-4 text-sm opacity-80 space-y-1 text-dark">
-          <li><strong>Email:</strong> brukstarss@google.com</li>
-        </ul>
-      </div>
-    </section>
-  </main>
-
-  <footer class="text-center py-6 text-sm text-light">
-    © 2025 Homework Roots. All rights reserved.
-  </footer>
-</body>
-</html>
-
-    </nav>
+      <a href="about.html">About Us</a>
+      <a href="index.html">Calendar & AI</a>
+      <a href="login/sign_up.html">Login</a>
+      <a href="motivation.html">Motivation</a>
   </header>
 
   <main>
     <section>
-      <h2>Empowering Learners</h2>
-      <p>We help users learn faster with AI-driven tools.</p>
+      <div id="motto">plant focus, grow success </div>
     </section>
-
-    <div id="motto-container">Where learning takes root.</div>
-
   </main>
 
-  <footer>© 2025 HOMEWORK ROOTS</footer>
+  <footer>© 2025 Homework Roots — All rights reserved.</footer>
 
   <script>
     const mottos = [
-      "Plant focus, grow success.",
-      "Grow your knowledge from the roots up.",
-      "Your foundation for success.",
-      "Build roots today for success tomorrow.",
-      "Because growth starts underground.",
-      "Smart roots, smarter you."
+        "plant focus, grow success.",
+
+       " grow your knowledge from the roots up.",
+
+	    "your foundation for success.",
+
+	    "build roots today for success tomorrow.",
+
+        "because growth starts underground.",
+
+        "smart roots, smarter you.",
+
     ];
 
-    const mottoContainer = document.getElementById("motto-container");
+    const mottoElement = document.getElementById("motto");
     let index = 0;
 
     function changeMotto() {
-      mottoContainer.style.opacity = 0;
+      mottoElement.style.opacity = 0; // fade out
       setTimeout(() => {
-        mottoContainer.textContent = mottos[index];
-        mottoContainer.style.opacity = 1;
         index = (index + 1) % mottos.length;
-      }, 600);
+        mottoElement.textContent = mottos[index];
+        mottoElement.style.opacity = 1; // fade in
+      }, 800);
     }
 
-    // Automatically change every 4 seconds
-    setInterval(changeMotto, 4000);
+    setInterval(changeMotto, 4000); // every 4 seconds
   </script>
 </body>
 </html>

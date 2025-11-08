@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register & Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="signup">
+        <h1 class="form-title">Login</h1>
+        <form method="post" action="">
+            <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" name="email" id="email" placeholder="Email" required>
+                <div class="border"></div><hr>
+                <label for="email">Email</label>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" id="password" placeholder="Password"requierd>
+                <div class="border"></div><hr>
+                <label for="password">Password</label>
+            </div>
+            <p class="recover">
+                <a href="#">Recover Password</a>
+            </p>
+            <div class="links">
+                <a id="signInButton" class="btn"role="button">Login</a>
+            </div>
+        </form>
+<div class="links">
+            <p>Already have an Account?</p>
+            <div class="links">
+            <button id="signUpButton"><a rel="signUpButton" href="login.html">Sign In</a></button>
+        </div>
+
+        <p id="errorMsg" style="color:red;text-align:center;margin-top:8px;"></p>
+
+        <script>
+            const allowed = [
+                { email: 'Iustin@gmail.com', password: '1234'},
+,                { email: 'Radu@gmail.com', password: '1234'},
+                { email: 'Erwin@gmail.com', password: '1234'},
+            ];
+
+            const signInBtn = document.getElementById('signInButton');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const errorMsg = document.getElementById('errorMsg');
+
+            signInBtn.addEventListener('click', () => {
+                const email = (emailInput.value || '').trim().toLowerCase();
+                const password = (passwordInput.value || '').trim();
+
+                const ok = allowed.some(acc => acc.email.toLowerCase() === email && acc.password === password);
+                if (ok) {
+                    window.location.href = '../index.html';
+                } else {
+                    errorMsg.textContent = 'Invalid email or password.';
+                    passwordInput.value = '';
+                }
+            });
+        </script>
+</body>
+</html>

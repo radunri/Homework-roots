@@ -1,0 +1,28 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "o aplicație web pentru elevi care organizează temele în listă și calendar, trimite notificări pentru deadline-uri și oferă explicații prin AI, fără să rezolve temele.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "openai": "^6.8.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/radunri/Homework-roots.git"
+  },
+  "bugs": {
+    "url": "https://github.com/radunri/Homework-roots/issues"
+  },
+  "homepage": "https://github.com/radunri/Homework-roots#readme"
+}

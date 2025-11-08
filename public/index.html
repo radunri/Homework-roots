@@ -9,7 +9,8 @@
             /* Dark theme variables and improved color palette */
             :root {
                 /* Palette from attachment */
-                --dark-1: #B08563; /* darker, browner yet still creamy */
+                --background: #B59E7D
+                --dark-1: #2b241e; 
                 --warm-1: #B59E7D; /* warm tan */
                 --warm-2: #CEC1A8; /* light beige */
                 --light:  #F1EADA; /* near cream (text on dark) */
@@ -19,15 +20,37 @@
                 --bg1: var(--dark-1);
                 --bg2: var(--warm-1);
                 --card: #3a352f;
-                --muted: hsl(39, 28%, 73%);
+                --muted: #2b241e;
                 --accent: var(--green-1);
                 --accent-2: var(--green-2);
                 --accent-3: var(--warm-1);
                 --glass: rgba(241,234,218,0.04);
                 --text: var(--light);
             }
+            .darkmode {
+            /* Darker, richer base colors */
+            --background: #2B241E;
+            --dark-1: #2b241e; /* deep brownish black */
+            --warm-1: #3d342b; /* muted warm brown */
+            --warm-2: #5a5045; /* medium warm beige-brown */
+            --light:  #e8e0cc; /* soft cream for text */
+            --green-1: #8ea07d; /* lighter, muted olive green */
+            --green-2: #a8b69a; /* pale green accent */
+
+            /* Derived values */
+            --bg1: var(--dark-1);
+            --bg2: var(--warm-1);
+            --card: #1f1a15; /* dark card background */
+            --muted: hsl(39, 15%, 75%); /* subdued warm grey */
+            --accent: var(--green-1);
+            --accent-2: var(--green-2);
+            --accent-3: var(--warm-2);
+            --glass: rgba(50, 45, 40, 0.4); /* subtle translucent effect */
+            --text: var(--light);
+            }
+
             *{box-sizing:border-box}
-            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background-color:#B59E7D;color:var(--text);min-height:100vh}
+            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background-color:var(--warm-1);color:var(--text);min-height:100vh}
             header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px}
             .brand{display:flex;align-items:center;gap:12px}
             .logo{width:48px;height:48px;border-radius:12px;background:var(--warm-1);display:inline-flex;align-items:center;justify-content:center;color:var(--dark-1);font-weight:800}
@@ -42,18 +65,19 @@
             .task small{color:var(--muted)}
             .task .actions{display:flex;gap:8px}
             .btn{background-color:var(--green-1);color:var(--light);border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
-            .btn.secondary{background:transparent;color:var(--green-1);border:1px solid rgba(118,128,100,0.18)}
-            .btn.warn{background-color:var(--warm-1);color:var(--dark-1)}
+            .btn.secondary{background:transparent;color:var(--green-1);border:2px solid rgba(118,128,100,0.18)}
+            .btn.secondary.edit{background:transparent;color:#2c231c;border:2px solid #2c231c}
+            .btn.warn{background-color:var(--warm-1);color:var(--muted)}
 
             /* Calendar area */
             .calendar-wrap{display:flex;flex-direction:column;gap:12px}
             .cal-header{display:flex;justify-content:space-between;align-items:center}
             .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-            .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
-            .cal-day .date{font-weight:700;color:var(--dark-1)}
+            .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid #5C4033}
+            .cal-day .date{font-weight:700;color:var(--card)}
             .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
-            .cal-day-selected{background-color:black;padding:10px;border-radius:10px;min-height:96px;border:1px solid rgba(76,88,62,0.06)}
-            .cal-day-selected .date{font-weight:700;color:var(--dark-1)}
+            .cal-day-selected{background-color:var(--card);padding:10px;border-radius:10px;min-height:96px;border:1px solid #5C4033}
+            .cal-day-selected .date{font-weight:700;color:var(--light)}
             .cal-day-selected .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
             .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
 
@@ -113,6 +137,64 @@
             .file-picker span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;display:inline-block}
             /* hide native input while keeping it in DOM for JS access */
             .file-input-hidden{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+            /*#themes-dropdown{
+                text-align: center;
+                background-color: var(--dark-1);
+                width: 100px;
+                border: 0;
+                border-radius: 8px;
+            }*/
+
+            /*Dark Mode switcher*/
+            #theme-switch {
+            border: 0;
+            margin-top: 5px;
+            margin-right: 5px;
+            border-radius: 50%;
+            top: 90%;
+            position: fixed;
+
+            /* Make the button larger */
+            width: 60px;
+            height: 60px;
+
+            /* Center the SVG */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            /* Optional styling */
+            background-color: color-mix(in srgb, var(--dark-1) 60%, transparent);;
+            cursor: pointer;
+            }
+            #theme-switch:hover{
+                background-color: var(--dark-1);
+            }
+
+            #theme-switch svg{
+                fill: var(--card);
+                width: 32px;
+                height: 32px;
+                opacity: 100%;
+            }
+            #theme-switch svg:last-child{
+                display: none;
+            }
+
+            .darkmode #theme-switch svg:first-child{
+                display: none;
+            }
+
+            .darkmode #theme-switch svg:last-child{
+                display: block;
+            }
+
+                        /* per-day small add button */
+
+	
+
+            .day-add-btn{position:absolute;right:8px;top:8px;display:none;padding:4px 6px;font-size:12px;border-radius:4px;cursor:pointer;background:transparent;border:none;color:#000;font-weight:700} 
+
         </style>
     </head>
     <body>
@@ -120,29 +202,41 @@
             <div class="brand">
                 <div class="logo"><img src="logo.jpg" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/></div>
                 <div>
-                    <div style="font-weight:700">Homework Roots</div>
+                    <div style="font-weight:700; color: var(--muted);">Homework Roots</div>
                     <div style="font-size:13px;color:var(--muted)">Organize tasks, calendar, OCR hints — beginner friendly</div>
                 </div>
             </div>
+            <button id="theme-switch">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
+            </button>
             <div>
+            <!--
+            <select name="themes" id="themes-dropdown">
+                <option value="wood">wood</option>
+                <option value="dark">dark</option>
+                <option value="pink">pink</option>
+                <option value="dark-blue">dark blue</option>
+                </select>-->
+
                 <a id="open-login" class="btn secondary" style="text-decoration:none;color:var(--accent);padding:8px 10px">Log out</a>
             </div>
+            <script type="text/javascript" src="darkmode.js" defer></script>
         </header>
 
         <main class="container">
             <div class="grid">
                 <aside class="panel">
-                    <h2>Today's Tasks</h2>
+                    <h2 style="color: var(--muted);">Today's Tasks</h2>
                     <div style="display:flex;gap:8px;margin-top:12px">
                         <button id="addTaskBtn" class="btn">+ New Task</button>
-                        <button id="scanBtn" class="btn secondary">OCR + Hints</button>
                     </div>
 
                     <div class="todo-list" id="todoList"></div>
 
                     <!-- Notifications checkbox removed per user request -->
 
-                    <div style="margin-top:12px;font-size:13px;color:var(--muted)">Tip: The app stores data locally in your browser. For persistent notifications when the page is closed consider installing as a PWA or keeping the page open.</div>
+                    <div style="margin-top:12px;font-size:13px;color:var(--muted);">Tip: The app stores data locally in your browser. For persistent notifications when the page is closed consider installing as a PWA or keeping the page open.</div>
                 </aside>
 
                 <section>
@@ -150,7 +244,7 @@
                         <div class="cal-header">
                             <div style="display:flex;gap:8px;align-items:center">
                                 <button id="prevMonth" class="btn secondary">‹</button>
-                                <div style="font-weight:700" id="monthLabel">Month</div>
+                                <div style="font-weight:700; color:var(--muted)" id="monthLabel">Month</div>
                                 <button id="nextMonth" class="btn secondary">›</button>
                             </div>
                             <div style="display:flex;gap:8px;align-items:center">
@@ -165,7 +259,7 @@
                     </div>
 
                     <div class="panel" style="margin-top:12px">
-                        <h2>OCR & Hints</h2>
+                        <h2 style="color: var(--muted);">OCR & Hints</h2>
                         <div class="ocr-area">
                             <div style="width:320px;display:flex;flex-direction:column;gap:8px">
                                 <!-- custom file-picker for image input (native input kept hidden for JS) -->
@@ -189,17 +283,17 @@
     </svg>
                                     <span style="font-weight:600;text-align:center;">Import .ics</span>
                                 </label>
-                                <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />
+                                <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />                             
                                 <div style="font-size:13px;color:var(--muted)">.</div>
                                 <div style="margin-top:8px;font-size:12px;color:var(--muted)"></div>
                             </div>
                             <div style="flex:1;display:flex;flex-direction:column;gap:8px">
-                                <textarea id="ocrText" placeholder="OCR output or paste problem text here..."></textarea>
+                                <textarea id="ocrText" style="color: black;" placeholder="OCR output or paste problem text here..."></textarea>
                                 <div style="display:flex;flex-direction:column;gap:8px;width:100%">
                                     <button id="genHintsBtn" class="btn">Generate Hints</button>
                                     <button id="copyHints" class="btn secondary">Copy Hints</button>
                                 </div>
-                                <div id="hintsArea" style="background-color:rgba(241,234,218,0.9);padding:12px;border-radius:8px;border:1px solid rgba(76,88,62,0.06);min-height:200px;color:var(--dark-1)"></div>
+                                <div id="hintsArea" style="background-color:rgba(241,234,218,0.9);padding:12px;border-radius:8px;border:1px solid rgba(76,88,62,0.06);min-height:200px;color:black"></div>
                             </div>
                         </div>
                     </div>
@@ -292,6 +386,10 @@
             }
 
             // Calendar render
+            // Helper: hide any visible per-day Add buttons
+            function hideAllAddBtns(){
+                try{ document.querySelectorAll('.day-add-btn').forEach(b=>{ b.style.display='none'; b.style.left=''; b.style.right='8px'; b.style.top='8px'; }); }catch(e){}
+            } 
             const calGrid = document.getElementById('calGrid');
             const monthLabel = document.getElementById('monthLabel');
             const selectedDateHeader = document.getElementById('selected-date');
@@ -357,6 +455,21 @@
                     if (key === state.selectedDate) {
                         cell.className = 'cal-day-selected';
                     }
+                    // Add a small per-cell Add Task button that opens modal for this date
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'day-add-btn';
+                    addBtn.type = 'button';
+                    addBtn.textContent = 'Add task';
+                    addBtn.addEventListener('click', (e) => { e.stopPropagation(); setSelectedDate(key); openModal(); });
+                    // show the add button only on right-click (contextmenu)
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        hideAllAddBtns();
+                        // show the add button at the top-right corner of the cell
+                        try{ setSelectedDate(key); }catch(err){}
+                        addBtn.style.display = 'block';
+                    });
+                    cell.appendChild(addBtn); 
                     // show small dots for tasks
                     const dots = cell.querySelector('.dots');
                     const tasks = state.tasks.filter(t=>t.date===key);
@@ -425,7 +538,7 @@
                 if(todays.length===0){todoListEl.innerHTML='<div style="color:var(--muted)">No tasks for selected date</div>'}
                 todays.forEach(t=>{
                     const el=document.createElement('div');el.className='task';
-                    el.innerHTML = `<div><div style="font-weight:600">${escapeHtml(t.title||'Untitled')}</div><small>${t.time||''} ${escapeHtml(t.desc||'')}</small></div><div class="actions"><button data-id="${t.id}" class="btn secondary edit">Edit</button><button data-id="${t.id}" class="btn warn">Delete</button></div>`;
+                    el.innerHTML = `<div><div style="font-weight:600; color:#2c231c;">${escapeHtml(t.title||'Untitled')}</div><small>${t.time||''} ${escapeHtml(t.desc||'')}</small></div><div class="actions"><button data-id="${t.id}" class="btn secondary edit">Edit</button><button data-id="${t.id}" class="btn warn">Delete</button></div>`;
                     todoListEl.appendChild(el);
                 });
             }
@@ -442,7 +555,13 @@
             const taskDesc = document.getElementById('taskDesc');
             let editingId = null;
 
+
+
             document.getElementById('addTaskBtn').addEventListener('click',()=>{openModal()});
+
+	
+
+            document.getElementById('addTaskBtn').addEventListener('click',()=>{ if(!state.selectedDate) state.selectedDate = todayISOLocal(); openModal(); });
             document.getElementById('closeModal').addEventListener('click',()=>closeModal());
             function openModal(task){
                 modal.style.display='flex';
@@ -553,6 +672,10 @@
             const runOcrBtn = document.getElementById('runOcrBtn');
             const genHintsBtn = document.getElementById('genHintsBtn');
             const hintsArea = document.getElementById('hintsArea');
+
+            // Hide any visible per-day add buttons when clicking elsewhere or opening context outside days
+            document.addEventListener('click', ()=>{ hideAllAddBtns(); });
+            document.addEventListener('contextmenu', (e)=>{ if(!e.target.closest('.cal-day')) hideAllAddBtns(); }); 
 
             // show selected image filename and thumbnail inside the upload label
             try{

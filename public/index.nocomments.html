@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title> Homework Roots</title>
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    <style>
+            :root {
+                --background: #B59E7D;
+                --dark-1: #2b241e; 
+                --warm-1: #B59E7D;
+                --warm-2: #CEC1A8;
+                --light:  #F1EADA;
+                --green-1: #768064;
+                --green-2: #4C583E;
+
+                --bg1: var(--dark-1);
+                --bg2: var(--warm-1);
+                --card: #3a352f;
+                --muted: #2b241e;
+                --accent: var(--green-1);
+                --accent-2: var(--green-2);
+                --accent-3: var(--warm-1);
+                --glass: rgba(241,234,218,0.04);
+                --text: var(--light);
+            }
+            .darkmode {
+            --background: #2B241E;
+            --dark-1: #2b241e;
+            --warm-1: #3d342b;
+            --warm-2: #5a5045;
+            --light:  #e8e0cc;
+            --green-1: #8ea07d;
+            --green-2: #a8b69a;
+
+            --bg1: var(--dark-1);
+            --bg2: var(--warm-1);
+            --card: #1f1a15;
+            --muted: hsl(39, 15%, 75%);
+            --accent: var(--green-1);
+            --accent-2: var(--green-2);
+            --accent-3: var(--warm-2);
+            --glass: rgba(50, 45, 40, 0.4);
+            --text: var(--light);
+            }
+
+            *{box-sizing:border-box}
+            body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background-color:var(--warm-1);color:var(--text);min-height:100vh}
+            header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px}
+            .brand{display:flex;align-items:center;gap:12px}
+            .logo{width:48px;height:48px;border-radius:12px;background:var(--warm-1);display:inline-flex;align-items:center;justify-content:center;color:var(--dark-1);font-weight:800}
+            .container{max-width:1200px;margin:20px auto;padding:18px}
+            .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+
+            .panel{background-color:var(--warm-2);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);border:1px solid rgba(76,88,62,0.06);color:var(--dark-1)}
+            .panel h2{margin:0 0 8px;font-size:16px;color:var(--dark-1)}
+            .todo-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+            .task{padding:10px;border-radius:10px;border:1px solid rgba(76,88,62,0.06);display:flex;justify-content:space-between;align-items:center;background:rgba(241,234,218,0.6)}
+            .task small{color:var(--muted)}
+            .task .actions{display:flex;gap:8px}
+            .btn{background-color:var(--green-1);color:var(--light);border:none;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+            .btn.secondary{background:transparent;color:var(--green-1);border:2px solid rgba(118,128,100,0.18)}
+            .btn.secondary.edit{background:transparent;color:#2c231c;border:2px solid #2c231c}
+            .btn.warn{background-color:var(--warm-1);color:var(--muted)}
+
+            .calendar-wrap{display:flex;flex-direction:column;gap:12px}
+            .cal-header{display:flex;justify-content:space-between;align-items:center}
+            .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+            .cal-day{background-color:var(--light);padding:10px;border-radius:10px;min-height:96px;border:1px solid #5C4033}
+            .cal-day .date{font-weight:700;color:var(--card)}
+            .cal-day .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+            .cal-day-selected{background-color:var(--card);padding:10px;border-radius:10px;min-height:96px;border:1px solid #5C4033}
+            .cal-day-selected .date{font-weight:700;color:var(--light)}
+            .cal-day-selected .dots{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+            .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-3)}
+
+            .ocr-area{margin-top:12px;display:flex;gap:12px;align-items:flex-start}
+            .ocr-area textarea{width:100%;min-height:88px;padding:12px;border-radius:10px;border:1px solid rgba(76,88,62,0.06);background-color:rgba(241,234,218,0.9);color:var(--dark-1)}
+
+            footer{margin:28px 0;text-align:center;color:var(--muted);font-size:13px}
+
+            .modal{position:fixed;left:0;top:0;right:0;bottom:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.45)}
+            .modal .box{background-color:var(--warm-2);padding:16px;border-radius:12px;max-width:540px;width:100%;border:1px solid rgba(76,88,62,0.06);color:var(--dark-1)}
+
+            @media (max-width:920px){.grid{grid-template-columns:1fr;}.container{padding:12px}}
+
+            .cal-day:hover{
+                background-color: hsla(42, 45%, 90%, 0.482);
+                cursor: pointer;
+            }
+            footer .footer-link{ color: inherit; text-decoration: none; cursor: pointer; }
+            input, textarea {
+                background-color: var(--light);
+                border: 1px solid rgba(76,88,62,0.12);
+                color: var(--dark-1);
+                padding:8px;
+                border-radius:8px;
+                outline: none;
+            }
+            input:focus, textarea:focus{ box-shadow: 0 6px 18px rgba(76,88,62,0.08); border-color: rgba(118,128,100,0.32);} 
+            input[type="file"]{ border-radius:15px; padding:6px 10px; }
+            input[type="file"]::-webkit-file-upload-button, input[type="file"]::file-selector-button{
+                border-radius:15px; background-color:var(--green-2); color:var(--light); border:none; padding:8px 12px; cursor:pointer;
+            }
+
+            .file-picker{
+                display:flex;align-items:center;justify-content:center;
+                padding:12px 16px;border-radius:12px;
+                background:var(--green-1);color:var(--light);
+                cursor:pointer;border:1px solid rgba(0,0,0,0.06);
+                width:100%;text-align:center;
+            }
+            .file-picker svg{width:28px;height:28px;margin-right:10px}
+            .file-picker span{display:inline-block;text-align:center}
+            .file-picker, #runOcrBtn, #genHintsBtn, #copyHints{
+                display:flex;align-items:center;justify-content:center;
+                width:100%;padding:12px 16px;margin:0;text-align:center;border-radius:12px;
+                box-sizing:border-box;cursor:pointer;min-height:48px;gap:8px;line-height:1;
+            }
+            .file-picker img{width:32px;height:32px;flex:0 0 32px}
+            .file-picker span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;display:inline-block}
+            .file-input-hidden{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+            #theme-switch {
+            border: 0;
+            margin-top: 5px;
+            margin-right: 5px;
+            border-radius: 50%;
+            top: 90%;
+            position: fixed;
+
+            width: 60px;
+            height: 60px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background-color: color-mix(in srgb, var(--dark-1) 60%, transparent);;
+            cursor: pointer;
+            }
+            #theme-switch:hover{
+                background-color: var(--dark-1);
+            }
+
+            #theme-switch svg{
+                fill: var(--card);
+                width: 32px;
+                height: 32px;
+                opacity: 100%;
+            }
+            #theme-switch svg:last-child{
+                display: none;
+            }
+
+            .darkmode #theme-switch svg:first-child{
+                display: none;
+            }
+
+            .darkmode #theme-switch svg:last-child{
+                display: block;
+            }
+
+            .day-add-btn{position:absolute;right:8px;top:8px;display:none;padding:4px 6px;font-size:12px;border-radius:4px;cursor:pointer;background:transparent;border:none;color:#000;font-weight:700} 
+
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="brand">
+                <div class="logo"><img src="logo.jpg" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/></div>
+                <div>
+                    <div style="font-weight:700; color: var(--muted);">Homework Roots</div>
+                    <div style="font-size:13px;color:var(--muted)">Organize tasks, calendar, OCR hints — beginner friendly</div>
+                </div>
+            </div>
+            <button id="theme-switch">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
+            </button>
+            <div>
+                <a href="login/login.html" id="open-login" class="btn secondary" style="text-decoration:none;color:var(--accent);padding:8px 10px">Log out</a>
+            </div>
+            <script type="text/javascript" src="darkmode.js" defer></script>
+        </header>
+
+        <main class="container">
+            <div class="grid">
+                <aside class="panel">
+                    <h2 style="color: var(--muted);">Today's Tasks</h2>
+                    <div style="display:flex;gap:8px;margin-top:12px">
+                        <button id="addTaskBtn" class="btn">+ New Task</button>
+                    </div>
+
+                    <div class="todo-list" id="todoList"></div>
+
+                    <div style="margin-top:12px;font-size:13px;color:var(--muted);">Tip: The app stores data locally in your browser.</div>
+                </aside>
+
+                <section>
+                    <div class="panel calendar-wrap">
+                        <div class="cal-header">
+                            <div style="display:flex;gap:8px;align-items:center">
+                                <button id="prevMonth" class="btn secondary">‹</button>
+                                <div style="font-weight:700; color:var(--muted)" id="monthLabel">Month</div>
+                                <button id="nextMonth" class="btn secondary">›</button>
+                            </div>
+                            <div style="display:flex;gap:8px;align-items:center">
+                                <button id="todayBtn" class="btn secondary">Today</button>
+                            </div>
+                        </div>
+
+                        <div class="cal-grid" id="calGrid"></div>
+                    </div>
+
+                    <div class="panel" style="margin-top:12px">
+                        <h2 style="color: var(--muted);">OCR & Hints</h2>
+                        <div class="ocr-area">
+                            <div style="width:320px;display:flex;flex-direction:column;gap:8px">
+                                <label class="file-picker" for="imageInput" title="Upload image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16" style="margin-right:10px;vertical-align:middle;">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+      <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+    </svg>
+                                    <div style="display:flex;align-items:center;gap:8px">
+                                        <img id="imageThumb" src="" alt="" style="width:32px;height:32px;display:none;border-radius:6px;object-fit:cover;border:1px solid rgba(0,0,0,0.06)" />
+                                        <span id="imageName" style="font-weight:600;text-align:center;">Upload image</span>
+                                    </div>
+                                </label>
+                                <input id="imageInput" class="file-input-hidden" type="file" accept="image/*" />
+                                <button id="runOcrBtn" class="btn">Run OCR</button>
+                                <label class="file-picker" for="icsFile" title="Import .ics">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16" style="margin-right:10px;vertical-align:middle;">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+      <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z"/>
+    </svg>
+                                    <span style="font-weight:600;text-align:center;">Import .ics</span>
+                                </label>
+                                <input id="icsFile" class="file-input-hidden" type="file" accept=".ics" />                             
+                                <div style="font-size:13px;color:var(--muted)"></div>
+                                <div style="margin-top:8px;font-size:12px;color:var(--muted)"></div>
+                            </div>
+                            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+                                <textarea id="ocrText" style="color: black;" placeholder="OCR output or paste problem text here..."></textarea>
+                                <div style="display:flex;flex-direction:column;gap:8px;width:100%">
+                                    <button id="genHintsBtn" class="btn">Generate Hints</button>
+                                    <button id="copyHints" class="btn secondary">Copy Hints</button>
+                                </div>
+                                <div id="hintsArea" style="background-color:rgba(241,234,218,0.9);padding:12px;border-radius:8px;border:1px solid rgba(76,88,62,0.06);min-height:200px;color:black"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer>API from <a href="https://openai.com" class="footer-link" target="_blank" rel="noopener">OpenAI</a></footer>
+        </main>
+
+        <div class="modal" id="taskModal">
+            <div class="box" style="color: #000;">
+                <h3 id="modalTitle">New Task</h3>
+                <div style="display:grid;gap:8px;margin-top:8px">
+                    <input id="taskTitle" placeholder="Title (e.g., Math homework)" />
+                    <input id="taskDate" type="date" />
+                    <input id="taskTime" type="time" />
+                    <textarea id="taskDesc" placeholder="Short description or problem text"></textarea>
+                    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+                        <button id="saveTask" class="btn">Save</button>
+                        <button id="closeModal" class="btn secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+        <script>
+            const state = { tasks: [], selectedDate: new Date().toLocaleDateString('en-CA'), notifEnabled: false };
+            function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+            function formatDate(d){return d}
+            function pad(n){return String(n).padStart(2,'0')}
+            function todayISOLocal(){const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+            function normalizeDateInput(s){
+                if(!s) return '';
+                s = String(s).trim();
+                if(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(s)) return s;
+                const m = s.match(/^\s*(\d{1,2})[\.\-/](\d{1,2})[\.\-/](\d{4})\s*$/);
+                if(m){
+                    let d = parseInt(m[1],10), mo = parseInt(m[2],10), y = parseInt(m[3],10);
+                    if(mo>12 && d<=12){ const tmp = d; d = mo; mo = tmp; }
+                    const day = pad(d); const month = pad(mo);
+                    return `${y}-${month}-${day}`;
+                }
+                return s;
+            }
+
+            function loadTasks(){
+                try{state.tasks = JSON.parse(localStorage.getItem('sh_tasks')||'[]')}catch(e){state.tasks=[]}
+            }
+            function saveTasks(){localStorage.setItem('sh_tasks',JSON.stringify(state.tasks)); saveState();}
+
+            function saveState(){
+                try{
+                    localStorage.setItem('sh_selectedDate', state.selectedDate || '');
+                    try{ localStorage.setItem('sh_viewDate', viewDate.getFullYear() + '-' + pad(viewDate.getMonth()+1)); }catch(e){}
+                    localStorage.setItem('sh_notif', state.notifEnabled ? 'true' : 'false');
+                    try{localStorage.setItem('sh_ocrText', document.getElementById('ocrText').value || '');}catch(e){}
+                }catch(e){console.warn('saveState failed', e)}
+            }
+
+            function loadState(){
+                try{
+                    const sd = localStorage.getItem('sh_selectedDate');
+                    if(sd) state.selectedDate = sd;
+                    const vd = localStorage.getItem('sh_viewDate');
+                    if(vd){
+                        const m = String(vd).match(/^(\d{4})-(\d{2})$/);
+                        if(m) viewDate = new Date(parseInt(m[1],10), parseInt(m[2],10)-1, 1);
+                        else {
+                            const parsed = new Date(vd);
+                            if(!isNaN(parsed)) viewDate = new Date(parsed.getFullYear(), parsed.getMonth(), 1);
+                        }
+                    }
+                    const o = localStorage.getItem('sh_ocrText');
+                    if(o) try{document.getElementById('ocrText').value = o;}catch(e){}
+                    const n = localStorage.getItem('sh_notif');
+                    state.notifEnabled = n === 'true';
+                }catch(e){console.warn('loadState failed', e)}
+            }
+
+            function hideAllAddBtns(){
+                try{ document.querySelectorAll('.day-add-btn').forEach(b=>{ b.style.display=''; b.style.left=''; b.style.right='8px'; b.style.top='8px'; }); }catch(e){}
+            } 
+            const calGrid = document.getElementById('calGrid');
+            const monthLabel = document.getElementById('monthLabel');
+            const selectedDateHeader = document.getElementById('selected-date');
+            let viewDate = new Date();
+
+            function updateSelectedDateHeader(){
+                try{
+                    if(!selectedDateHeader) return;
+                    const sd = state.selectedDate || new Date().toISOString().slice(0,10);
+                    const parts = sd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                    if(parts){
+                        const y = parseInt(parts[1],10), mo = parseInt(parts[2],10)-1, d = parseInt(parts[3],10);
+                        const dt = new Date(y, mo, d);
+                        selectedDateHeader.innerText = dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                    } else {
+                        selectedDateHeader.innerText = sd;
+                    }
+                }catch(e){console.warn('updateSelectedDateHeader failed', e)}
+            }
+
+            function setSelectedDate(isoYMD){
+                state.selectedDate = isoYMD;
+                try{ updateSelectedDateHeader(); }catch(e){}
+                try{ renderCalendar(); }catch(e){}
+                try{ renderTodoList(); }catch(e){}
+            }
+
+            function startOfMonth(d){return new Date(d.getFullYear(),d.getMonth(),1)}
+            function endOfMonth(d){return new Date(d.getFullYear(),d.getMonth()+1,0)}
+
+            function renderCalendar(){
+                calGrid.innerHTML='';
+                const start = startOfMonth(viewDate);
+                const end = endOfMonth(viewDate);
+                try{
+                    const sd = state.selectedDate || new Date().toISOString().slice(0,10);
+                    const parts = sd.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                    if(parts){
+                        const y = parseInt(parts[1],10), mo = parseInt(parts[2],10)-1, d = parseInt(parts[3],10);
+                        const dt = new Date(y, mo, d);
+                        monthLabel.textContent = dt.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+                    } else {
+                        monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric'});
+                    }
+                }catch(e){ monthLabel.textContent = viewDate.toLocaleString(undefined,{month:'long',year:'numeric'}); }
+                const startWeekday = start.getDay();
+                const total = end.getDate();
+
+                for(let i=0;i<startWeekday;i++){const cell=document.createElement('div');cell.className='cal-day';cell.id="cal-day";cell.style.opacity=.4;calGrid.appendChild(cell);}
+                if(!state.selectedDate) state.selectedDate = new Date().toISOString().slice(0,10);
+                for(let d=1;d<=total;d++){
+                    const dt = new Date(viewDate.getFullYear(),viewDate.getMonth(),d);
+                    const key = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
+
+                    const cell=document.createElement('div');cell.className='cal-day';
+                    cell.innerHTML = `<div class="date">${d}</div><div class="dots" data-date="${key}"></div>`;
+                    cell.addEventListener('click',()=>{ setSelectedDate(key); });
+                    if (key === state.selectedDate) {
+                        cell.className = 'cal-day-selected';
+                    }
+                    const addBtn = document.createElement('button');
+                    addBtn.className = 'day-add-btn';
+                    addBtn.type = 'button';
+                    addBtn.textContent = 'Add task';
+                    addBtn.addEventListener('click', (e) => { e.stopPropagation(); setSelectedDate(key); openModal(); });
+                    cell.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        hideAllAddBtns();
+                        try{ setSelectedDate(key); }catch(err){}
+                        addBtn.style.display = 'block';
+                    });
+                    cell.appendChild(addBtn); 
+                    const dots = cell.querySelector('.dots');
+                    const tasks = state.tasks.filter(t=>t.date===key);
+                    tasks.slice(0,5).forEach(t=>{const dot=document.createElement('div');dot.className='dot';dots.appendChild(dot)});
+
+                    calGrid.appendChild(cell);
+                }
+                    document.getElementById('icsFile').addEventListener('change', (e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = function (evt) {
+                        const icsText = evt.target.result;
+                        const events = parseICS(icsText);
+                        console.log(events);
+                        events.forEach((item) => {
+                            const title = item["title"] || 'Untitled';
+                            const date = item["date"] || '';
+                            const description = item["description"] || '';
+                            console.log(title, date, description);
+                            try{ saveTask(title, date, description); }catch(err){ console.warn('saveTask failed', err); }
+                        });
+                    };
+                    reader.readAsText(file);
+                    });
+
+                    function parseICS(icsData) {
+                    const events = [];
+                    const lines = icsData.split(/\r?\n/);
+                    let current = {};
+
+                    for (let line of lines) {
+                        if (line.startsWith('BEGIN:VEVENT')) current = {};
+                        else if (line.startsWith('END:VEVENT')) events.push(current);
+                        else if (line.startsWith('SUMMARY:')) current.title = line.slice(8);
+                        else if (line.startsWith('DESCRIPTION:')) current.description = line.slice(12);
+                        else if (line.startsWith('DTSTART')) {
+                        current.date = parseICSDate(line);
+                        }
+                    }
+                    return events;
+                }
+
+                function parseICSDate(line) {
+                const [, value] = line.split(':');
+                const dt = value.replace('T', '').replace('Z', '');
+                const year = dt.slice(0, 4);
+                const month = dt.slice(4, 6);
+                const day = dt.slice(6, 8);
+                return `${year}-${month}-${day}`;
+                }
+                
+            }
+            
+
+            const todoListEl = document.getElementById('todoList');
+            function renderTodoList(){
+                const today = state.selectedDate;
+                todoListEl.innerHTML='';
+                const todays = state.tasks.filter(t=>t.date===today).sort((a,b)=> (a.time||'')>(b.time||'')?1:-1);
+                if(todays.length===0){todoListEl.innerHTML='<div style="color:var(--muted)">No tasks for selected date</div>'}
+                todays.forEach(t=>{
+                    const el=document.createElement('div');el.className='task';
+                    el.innerHTML = `<div><div style="font-weight:600; color:#2c231c;">${escapeHtml(t.title||'Untitled')}</div><small>${t.time||''} ${escapeHtml(t.desc||'')}</small></div><div class="actions"><input type="checkbox"></input><button data-id="${t.id}" class="btn secondary edit">Edit</button><button data-id="${t.id}" class="btn warn">Delete</button></div>`;
+                    todoListEl.appendChild(el);
+                });
+            }
+
+            function escapeHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+            const modal = document.getElementById('taskModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const taskTitle = document.getElementById('taskTitle');
+            const taskDate = document.getElementById('taskDate');
+            const taskTime = document.getElementById('taskTime');
+            const taskDesc = document.getElementById('taskDesc');
+            let editingId = null;
+
+
+
+            document.getElementById('addTaskBtn').addEventListener('click',()=>{if(!state.selectedDate) state.selectedDate = todayISOLocal(); openModal(); });
+            document.getElementById('closeModal').addEventListener('click',()=>closeModal());
+            function openModal(task){
+                modal.style.display='flex';
+                if(task){editingId=task.id;modalTitle.textContent='Edit Task';taskTitle.value=task.title;taskDate.value=task.date;taskTime.value=task.time||'';taskDesc.value=task.desc||''}
+                else{editingId=null;modalTitle.textContent='New Task';taskTitle.value='';taskDate.value=state.selectedDate;taskTime.value='';taskDesc.value=''}
+            }
+            function closeModal(){modal.style.display='none'}
+
+            function saveTask(titleArg, dateArg, descArg) {
+                const title = titleArg || taskTitle.value.trim();
+                const rawDate = dateArg || taskDate.value || state.selectedDate || '';
+                const isoDate = normalizeDateInput(rawDate) || state.selectedDate || todayISOLocal();
+                const desc = descArg || taskDesc.value;
+
+                const t = { title, date: isoDate, time: taskTime.value, desc };
+
+                if (!t.title) return alert('Please give the task a title');
+
+                const exists = state.tasks.some(t => t.title === title && t.date === isoDate);
+                if (exists) {
+                    console.warn(`Duplicate task skipped: ${title} on ${isoDate}`);
+                    return;
+                }
+
+                if (editingId) {
+                    const idx = state.tasks.findIndex(x => x.id === editingId);
+                    if (idx >= 0) state.tasks[idx] = Object.assign({}, state.tasks[idx], t);
+                } else {
+                    state.tasks.push(Object.assign({ id: uid(), notified: false }, t));
+                }
+
+                saveTasks();
+                renderCalendar();
+                renderTodoList();
+                closeModal();
+            }
+
+            document.getElementById('saveTask').addEventListener('click', () => saveTask());
+            todoListEl.addEventListener('click',e=>{
+                if(e.target.matches('button.edit')){
+                    const id=e.target.getAttribute('data-id');openModal(state.tasks.find(t=>t.id===id));
+                } else if(e.target.matches('button') && e.target.textContent.toLowerCase()==='delete'){
+                    const id=e.target.getAttribute('data-id');if(confirm('Delete this task?')){state.tasks=state.tasks.filter(t=>t.id!==id);saveTasks();renderCalendar();renderTodoList();}
+                }
+            });
+
+            document.getElementById('prevMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()-1,1);renderCalendar()});
+            document.getElementById('nextMonth').addEventListener('click',()=>{viewDate=new Date(viewDate.getFullYear(),viewDate.getMonth()+1,1);renderCalendar()});
+            document.getElementById('todayBtn').addEventListener('click',()=>{viewDate=new Date();state.selectedDate=new Date().toISOString().slice(0,10);renderCalendar();renderTodoList();});
+
+            const enableNotif = document.getElementById('enableNotif');
+            if(enableNotif){
+                enableNotif.addEventListener('change',()=>{state.notifEnabled = enableNotif.checked; localStorage.setItem('sh_notif', state.notifEnabled); if(state.notifEnabled) requestNotificationPermission();});
+            }
+
+            function requestNotificationPermission(){
+                if(!('Notification' in window)) return alert('Notifications not supported in this browser');
+                Notification.requestPermission().then(p=>{if(p!=='granted'){alert('Please allow notifications to receive due reminders.')}})
+            }
+
+            function buildDateTimeFromParts(ymd, time){
+                if(!ymd) return null;
+                const m = String(ymd).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                if(!m) return null;
+                const y = parseInt(m[1],10), mo = parseInt(m[2],10)-1, d = parseInt(m[3],10);
+                let hh = 0, mm = 0;
+                if(time){
+                    const p = String(time).split(':');
+                    hh = parseInt(p[0]||0,10)||0; mm = parseInt(p[1]||0,10)||0;
+                }
+                return new Date(y, mo, d, hh, mm, 0, 0);
+            }
+
+            function checkNotifications(){
+                if(!state.notifEnabled) return;
+                if(Notification.permission!=='granted') return;
+                const now = new Date();
+                state.tasks.forEach(t=>{
+                    if(t.notified) return;
+                    if(!t.date || !t.time) return;
+                    const when = buildDateTimeFromParts(t.date, t.time);
+                    if(!when) return;
+                    const delta = when - now;
+                    if(delta<=0 && delta>-60000){
+                        showNotification(`Task due: ${t.title}`, t.desc||'');
+                        t.notified = true; saveTasks();
+                    }
+                });
+            }
+
+            function showNotification(title, body){
+                try{
+                    const n = new Notification(title,{body,icon:''});
+                    if(navigator.serviceWorker && navigator.serviceWorker.controller){
+                        navigator.serviceWorker.controller.postMessage({type:'show-notif',title,body});
+                    }
+                }catch(e){console.warn(e)}
+            }
+
+            const imageInput = document.getElementById('imageInput');
+            const ocrText = document.getElementById('ocrText');
+            const runOcrBtn = document.getElementById('runOcrBtn');
+            const genHintsBtn = document.getElementById('genHintsBtn');
+            const hintsArea = document.getElementById('hintsArea');
+
+            document.addEventListener('click', ()=>{ hideAllAddBtns(); });
+            document.addEventListener('contextmenu', (e)=>{ if(!e.target.closest('.cal-day')) hideAllAddBtns(); }); 
+
+            try{
+                const imageNameEl = document.getElementById('imageName');
+                const imageThumb = document.getElementById('imageThumb');
+                if(imageInput){
+                    imageInput.addEventListener('change', (e)=>{
+                        const f = e.target.files && e.target.files[0];
+                        if(!f){
+                            if(imageNameEl) imageNameEl.textContent = 'Upload image';
+                            if(imageThumb) { imageThumb.src=''; imageThumb.style.display='none'; }
+                            return;
+                        }
+                        if(imageNameEl) imageNameEl.textContent = f.name;
+                        if(imageThumb && f.type && f.type.startsWith('image/')){
+                            const url = URL.createObjectURL(f);
+                            imageThumb.src = url;
+                            imageThumb.style.display = 'block';
+                            imageThumb.onload = ()=>{ URL.revokeObjectURL(url); }
+                        } else if(imageThumb){ imageThumb.style.display='none'; }
+                    });
+                }
+            }catch(e){console.warn('image preview setup failed',e)}
+
+            async function preprocessImage(dataUrl, maxWidth = 1600){
+                return new Promise((resolve, reject)=>{
+                    const img = new Image();
+                    img.onload = ()=>{
+                        try{
+                            const ratio = Math.min(1, maxWidth / img.width);
+                            const w = Math.max(1, Math.floor(img.width * ratio));
+                            const h = Math.max(1, Math.floor(img.height * ratio));
+                            const canvas = document.createElement('canvas');
+                            canvas.width = w; canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            try{
+                                const imageData = ctx.getImageData(0,0,w,h);
+                                const data = imageData.data;
+                                const factor = 1.2;
+                                for(let i=0;i<data.length;i+=4){
+                                    const r = data[i], g = data[i+1], b = data[i+2];
+                                    const avg = (r+g+b)/3;
+                                    let v = (avg - 128) * factor + 128;
+                                    v = Math.max(0, Math.min(255, v));
+                                    data[i] = data[i+1] = data[i+2] = v;
+                                }
+                                ctx.putImageData(imageData,0,0);
+                            }catch(e){
+                                console.warn('preprocessImage: imageData failed', e);
+                            }
+
+                            resolve(canvas.toDataURL('image/png'));
+                        }catch(err){reject(err)}
+                    };
+                    img.onerror = reject;
+                    img.crossOrigin = 'anonymous';
+                    img.src = dataUrl;
+                });
+            }
+
+                async function preprocessForHandwriting(dataUrl, maxWidth = 2200){
+                    return new Promise((resolve, reject)=>{
+                        const img = new Image();
+                        img.onload = ()=>{
+                            try{
+                                const ratio = Math.min(1, maxWidth / img.width);
+                                const w = Math.max(1, Math.floor(img.width * ratio));
+                                const h = Math.max(1, Math.floor(img.height * ratio));
+                                const canvas = document.createElement('canvas');
+                                canvas.width = w; canvas.height = h;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, w, h);
+
+                                let imageData;
+                                try{ imageData = ctx.getImageData(0,0,w,h); }catch(e){ return resolve(canvas.toDataURL('image/png')); }
+                                const data = imageData.data;
+
+                                let sum = 0;
+                                for(let i=0;i<data.length;i+=4){
+                                    const r = data[i], g = data[i+1], b = data[i+2];
+                                    const avg = (r+g+b)/3;
+                                    data[i] = data[i+1] = data[i+2] = avg;
+                                    sum += avg;
+                                }
+                                const mean = sum / (w*h);
+
+                                const thresh = Math.max(80, Math.min(180, mean * 0.95));
+                                for(let i=0;i<data.length;i+=4){
+                                    const v = data[i];
+                                    const bit = v < thresh ? 0 : 255;
+                                    data[i] = data[i+1] = data[i+2] = bit;
+                                    data[i+3] = 255;
+                                }
+
+                                ctx.putImageData(imageData,0,0);
+
+                                try{
+                                    const src = ctx.getImageData(0,0,w,h);
+                                    const s = src.data;
+                                    const out = ctx.createImageData(w,h);
+                                    const d = out.data;
+                                    for(let y=0;y<h;y++){
+                                        for(let x=0;x<w;x++){
+                                            let maxv = 0;
+                                            for(let oy=-1;oy<=1;oy++){
+                                                for(let ox=-1;ox<=1;ox++){
+                                                    const nx = x+ox, ny = y+oy;
+                                                    if(nx<0||ny<0||nx>=w||ny>=h) continue;
+                                                    const idx = (ny*w+nx)*4;
+                                                    const val = s[idx];
+                                                    if(val>maxv) maxv = val;
+                                                }
+                                            }
+                                            const idx2 = (y*w+x)*4;
+                                            d[idx2] = d[idx2+1] = d[idx2+2] = maxv;
+                                            d[idx2+3] = 255;
+                                        }
+                                    }
+                                    ctx.putImageData(out,0,0);
+                                }catch(e){ }
+
+                                resolve(canvas.toDataURL('image/png'));
+                            }catch(err){
+                                resolve(dataUrl);
+                            }
+                        };
+                        img.onerror = ()=>resolve(dataUrl);
+                        img.crossOrigin = 'anonymous';
+                        img.src = dataUrl;
+                    });
+                }
+
+            runOcrBtn.addEventListener('click', async ()=>{
+                const file = imageInput.files[0];
+                if(!file) return alert('Choose an image first');
+                hintsArea.textContent = 'Loading image...';
+
+                const reader = new FileReader();
+                reader.onerror = ()=>{ hintsArea.textContent = 'Failed to read image'; };
+                reader.onload = async (e) => {
+                    const imgSrc = e.target.result;
+                    hintsArea.textContent = 'Preparing image...';
+
+                    try{
+                        const pre = await preprocessImage(imgSrc, 1600);
+
+                        const worker = Tesseract.createWorker({
+                            logger: m => {
+                                if(m.status && typeof m.progress === 'number'){
+                                    const pct = Math.round(m.progress * 100);
+                                    hintsArea.textContent = `${m.status} — ${pct}%`;
+                                }
+                            },
+                            workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/worker.min.js',
+                            corePath: 'https://cdn.jsdelivr.net/npm/tesseract.js-core@2.1.0/tesseract-core.wasm.js'
+                        });
+
+                        hintsArea.textContent = 'Initializing OCR engine...';
+                        await worker.load();
+                        await worker.loadLanguage('eng');
+                        await worker.initialize('eng');
+
+                        hintsArea.textContent = 'Recognizing text — this may take a moment...';
+                        const { data: { text } } = await worker.recognize(pre);
+                        ocrText.value = text;
+                        hintsArea.textContent = 'OCR complete — press "Generate Hints"';
+
+                        await worker.terminate();
+                    }catch(err){
+                        console.error(err);
+                        hintsArea.textContent = 'OCR failed: ' + (err.message || err);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+
+            genHintsBtn.addEventListener('click',async ()=>{
+                const message = ocrText.value.trim();
+                const chatBox = document.getElementById("hintsArea")
+                if (!message) return;
+
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "message";
+                messageDiv.textContent = "Loading...";
+                chatBox.appendChild(messageDiv);
+
+                try {
+                    const res = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message })
+                    });
+
+                    const data = await res.json();
+
+                    messageDiv.innerHTML = "";
+
+                    const titleEl = document.createElement("h2");
+                    titleEl.textContent = data.title;
+                    const bodyEl = document.createElement("p");
+                    bodyEl.textContent = data.body;
+
+                    messageDiv.appendChild(titleEl);
+                    messageDiv.appendChild(bodyEl);
+
+                } catch (err) {
+                    messageDiv.textContent = "Error: could not connect to GPT-5.";
+                    console.error(err);
+                }
+
+                try{ document.getElementById('userMessage').value = ''; }catch(e){}
+                            });
+
+            document.getElementById('copyHints').addEventListener('click',()=>{navigator.clipboard.writeText(hintsArea.innerText).then(()=>alert('Hints copied'))});
+
+            function generateHintsLocal(text){
+                const hints = [];
+                const lower = text.toLowerCase();
+                if(/[0-9]+\s*[=+\-*/^]|x|y|\d+\s?[=]/i.test(text) || /\bsolve\b|\bequation\b|\bintegral\b|\bdifferentiate\b/i.test(text)){
+                    hints.push('Identify what each symbol represents (variables, constants, operators).');
+                    hints.push('Separate the problem: what is given and what is asked.');
+                    hints.push('Try a simpler numeric example to build intuition.');
+                }
+                if(/triangle|circle|angle|perimeter|area|radius|diameter/i.test(lower)){
+                    hints.push('Sketch the figure and label known sides/angles.');
+                    hints.push('Look for symmetries or right angles.');
+                }
+                if(/algorithm|complexity|sort|array|loop|function|variable/i.test(lower)){
+                    hints.push('Break the task into small steps and write pseudocode.');
+                    hints.push('Consider edge cases (empty inputs, very large inputs).');
+                }
+                if(/molecule|reaction|acid|base|cell|photosynthesis/i.test(lower)){
+                    hints.push('Identify conservation rules or balances (mass, charge).');
+                    hints.push('Summarize definitions and key terms first.');
+                }
+                hints.push('Restate the problem in your own words.');
+                hints.push('If stuck, try specific simple examples.');
+                return hints.slice(0,8);
+            }
+
+            async function generateHints(text){
+                try{
+                    const resp = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify({text})
+                    });
+                    if(resp.ok){
+                        const data = await resp.json();
+                        if(Array.isArray(data.hints) && data.hints.length>0) return data.hints;
+                    }
+                }catch(e){
+                    return "Could not connect to AI";
+                }
+            }
+
+            setInterval(checkNotifications,30000);
+
+            loadTasks();
+            loadState();
+            try{ updateSelectedDateHeader(); }catch(e){}
+            renderCalendar();
+            renderTodoList();
+
+            if('serviceWorker' in navigator){
+                navigator.serviceWorker.register('sw.js').then(()=>console.log('sw registered')).catch(()=>console.warn('sw failed'));
+            }
+
+            try{ document.getElementById('open-login').addEventListener('click',()=>{if(confirm('Log out?')) location.reload()}); }catch(e){}
+
+            window.SH = {state,save:saveTasks,load:loadTasks};
+        </script>
+    </body>
+
+</html>

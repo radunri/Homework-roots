@@ -235,7 +235,7 @@
 
                     <!-- Notifications checkbox removed per user request -->
 
-                    <div style="margin-top:12px;font-size:13px;color:var(--muted);">Tip: The app stores data locally in your browser. For persistent notifications when the page is closed consider installing as a PWA or keeping the page open.</div>
+                    <div style="margin-top:12px;font-size:13px;color:var(--muted);">Tip: The app stores data locally in your browser.</div>
                 </aside>
 
                 <section>
@@ -537,7 +537,7 @@
                 if(todays.length===0){todoListEl.innerHTML='<div style="color:var(--muted)">No tasks for selected date</div>'}
                 todays.forEach(t=>{
                     const el=document.createElement('div');el.className='task';
-                    el.innerHTML = `<div><div style="font-weight:600; color:#2c231c;">${escapeHtml(t.title||'Untitled')}</div><small>${t.time||''} ${escapeHtml(t.desc||'')}</small></div><div class="actions"><button data-id="${t.id}" class="btn secondary edit">Edit</button><button data-id="${t.id}" class="btn warn">Delete</button></div>`;
+                    el.innerHTML = `<div><div style="font-weight:600; color:#2c231c;">${escapeHtml(t.title||'Untitled')}</div><small>${t.time||''} ${escapeHtml(t.desc||'')}</small></div><div class="actions"><input type="checkbox"></input><button data-id="${t.id}" class="btn secondary edit">Edit</button><button data-id="${t.id}" class="btn warn">Delete</button></div>`;
                     todoListEl.appendChild(el);
                 });
             }
